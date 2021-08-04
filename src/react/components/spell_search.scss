@@ -1,0 +1,34 @@
+$light: #34495e;
+$dark: #2c3e50;
+
+.spell-search {
+  color: white;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  .form {
+    padding: 5px;
+    display: flex;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+    background: $light;
+
+    button {
+      color: white;
+      background: $light;
+      border: 1px solid white;
+      padding: 10px;
+      margin: 2px;
+
+      &:hover {
+        background: mix($light, rgb(100, 100, 100));
+      }
+    }
+  }
+}
