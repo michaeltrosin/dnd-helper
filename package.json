@@ -9,7 +9,9 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "electron-log": "^4.4.1",
+    "electron-updater": "^4.3.9"
   },
   "devDependencies": {
     "@svgr/webpack": "^5.5.0",
@@ -40,12 +42,13 @@
   },
   "scripts": {
     "build": "webpack",
+    "prepack": "if exist \"build\\\" (rmdir /s /q build)",
     "react:dev": "webpack serve --mode=development",
     "electron:dev": "nodemon",
     "dev": "concurrently --kill-others \"npm run react:dev\" \"npm run electron:dev\"",
     "start": "npm run build && electron dist/main.js",
-    "pack": "npm run build && electron-builder",
-    "release": "npm run build && electron-builder --publish=always"
+    "pack": "npm run prepack && npm run build && electron-builder --win --publish never",
+    "release": "npm run prepack && npm run build && electron-builder --win --publish always"
   },
   "build": {
     "appId": "io.ra6.dndhelper",
@@ -54,14 +57,11 @@
     },
     "files": [
       "dist/**/*",
-      "node_modules/**/*",
       "package.json"
     ],
     "extraMetadata": {
       "main": "dist/main.js"
-    },
-    "publish": null,
-    "extends": null
+    }
   },
   "eslintConfig": {
     "extends": [

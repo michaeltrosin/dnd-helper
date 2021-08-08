@@ -1,6 +1,6 @@
 import {Component} from 'react';
-import {SpellEditor} from '@/react/components/spell_editor';
-import {ISpell} from '@/react/components/spell_model';
+import {SpellEditor} from '@/react/components/spell/spell_editor';
+import {ISpell} from '@/react/components/spell/spell_model';
 
 type State = {
     selected_spell: ISpell & { id: number } | null
@@ -22,6 +22,7 @@ export class SpellComponent extends Component<Props, State> {
         return (
             <>
                 <SpellEditor spell={this.state.selected_spell}/>
+                {/*<SpellSearch/>*/}
             </>
         );
     }

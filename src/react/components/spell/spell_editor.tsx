@@ -23,7 +23,10 @@ import {
 import './spell_editor.scss';
 
 import {ipcRenderer} from 'electron';
-import {Messages} from '@/shared/ipc_messages';
+import {Ipc} from '@/shared/ipc';
+import {Channels} from '@/shared/channels';
+import {DialogChannel} from '@/electron/channels/dialog_channel';
+import {MessageQueueChannel} from '@/electron/channels/message_queue_channel';
 
 type State = {
     editing: boolean;
@@ -313,13 +316,13 @@ export class SpellEditor extends Component<Props, State> {
     }
 
     submit() {
-        ipcRenderer.invoke(Messages.CONFIRM_DIALOG, {
+        Ipc.request<DialogChannel>(Channels.Dialog, {
             buttons: ['Speichern', 'Nicht Speichern'],
             message: 'Bist du sicher, dass du speichern willst?',
             title: 'Speichern?',
             type: 'question'
-        }).then((result: number) => {
-            if (result === 0) {
+        }).then(result => {
+            if (result.selected_index === 0) {
                 const spell: ISpell = this.get_as_spell();
 
                 const requestOptions = {
@@ -332,6 +335,17 @@ export class SpellEditor extends Component<Props, State> {
                     .then(res => res.json())
                     .then(res => {
                         console.log(res);
+                    })
+                    .finally(() => {
+                        Ipc.request<MessageQueueChannel>(Channels.MessageQueue, {
+                            method: 'post',
+                            data: {
+                                type: 'info',
+                                title: 'Info',
+                                content: 'In der Datenbank gespeichert'
+                            },
+                            length: 5000
+                        }).catch(err => console.log(err));
                     });
             }
         });
@@ -379,7 +393,7 @@ export class SpellEditor extends Component<Props, State> {
                                     {
                                         Object.entries(spell_classes).map(c => {
                                             return (
-                                                <tr>
+                                                <tr key={c[0]}>
                                                     <td>
                                                         <input defaultChecked={this.state.classes.indexOf(c[0] as SpellClass) !== -1}
                                                                onChange={e => this.change_classes(c[0] as keyof (typeof spell_classes), e)}
@@ -399,7 +413,7 @@ export class SpellEditor extends Component<Props, State> {
                                 <select defaultValue={this.state.school} onChange={e => this.change_school(e)}>
                                     {
                                         Object.entries(schools).map(school => {
-                                            return <option value={school[0]}>{school[1]}</option>;
+                                            return <option key={school[0]} value={school[0]}>{school[1]}</option>;
                                         })
                                     }
                                 </select>
@@ -426,19 +440,19 @@ export class SpellEditor extends Component<Props, State> {
                                 <select defaultValue={this.state.time_consumption_format} onChange={e => this.change_time_type(e)}>
                                     {
                                         Object.entries(time_units).map(time_unit => {
-                                            return <option value={time_unit[0]}>{time_unit[1]}</option>;
+                                            return <option key={time_unit[0]} value={time_unit[0]}>{time_unit[1]}</option>;
                                         })
                                     }
                                 </select>
                             </div>
-                            <div className={classes('range','border')}>
+                            <div className={classes('range', 'border')}>
                                 <p>Reichweite</p>
                                 <input defaultValue={this.state.range_value} onChange={e => this.change_range_value(e)} min={0}
                                        type="number"/>
                                 <select defaultValue={this.state.range_format} onChange={e => this.change_range_type(e)}>
                                     {
                                         Object.entries(range_units).map(range_unit => {
-                                            return <option value={range_unit[0]}>{range_unit[1]}</option>;
+                                            return <option key={range_unit[0]} value={range_unit[0]}>{range_unit[1]}</option>;
                                         })
                                     }
                                 </select>
@@ -449,7 +463,7 @@ export class SpellEditor extends Component<Props, State> {
                                 <p>Ziel</p>
                                 <input onChange={e => this.change_target(e)} defaultValue={this.state.target} type="text"/>
                             </div>
-                            <div className={classes('components','border')}>
+                            <div className={classes('components', 'border')}>
                                 <p>Komponente</p>
                                 <div>
                                     <table>
@@ -481,7 +495,7 @@ export class SpellEditor extends Component<Props, State> {
                                            onChange={e => this.change_component('material', e)} type="text"/>
                                 </div>
                             </div>
-                            <div className={classes('duration','border')}>
+                            <div className={classes('duration', 'border')}>
                                 <div>
                                     <p>Dauer</p>
                                     <input defaultValue={this.state.duration_value} onChange={e => this.change_duration_value(e)} min={0}
@@ -489,7 +503,7 @@ export class SpellEditor extends Component<Props, State> {
                                     <select defaultValue={this.state.duration_format} onChange={e => this.change_duration_type(e)}>
                                         {
                                             Object.entries(duration_units).map(duration_unit => {
-                                                return <option value={duration_unit[0]}>{duration_unit[1]}</option>;
+                                                return <option key={duration_unit[0]} value={duration_unit[0]}>{duration_unit[1]}</option>;
                                             })
                                         }
                                     </select>
@@ -520,12 +534,12 @@ export class SpellEditor extends Component<Props, State> {
                                 <select defaultValue={this.state.attributes} onChange={e => this.change_attributes(e)}>
                                     {
                                         Object.entries(attributes).map(attribute => {
-                                            return <option value={attribute[0]}>{attribute[1]}</option>;
+                                            return <option key={attribute[0]} value={attribute[0]}>{attribute[1]}</option>;
                                         })
                                     }
                                 </select>
                             </div>
-                            <div className={classes('description','border')}>
+                            <div className={classes('description', 'border')}>
                                 <p>Beschreibung</p>
                                 <textarea defaultValue={this.state.description} onChange={e => this.change_description(e)} cols={50}
                                           rows={20}/>

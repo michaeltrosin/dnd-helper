@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 
 import './app.scss';
-import {SpellEditor} from '@/react/components/spell_editor';
-import {SpellComponent} from '@/react/components/spell_component';
+import {SpellComponent} from '@/react/components/spell/spell_component';
+import {MessageCenter} from '@/react/components/message_center';
 
 type State = {};
 
@@ -14,6 +14,7 @@ class App extends Component<any, State> {
     render() {
         return (
             <div id="app">
+                <MessageCenter/>
                 <div id="wrapper">
                     <SpellComponent/>
                 </div>
