@@ -1,0 +1,84 @@
+@use 'src/defaults' as defaults;
+
+#spellview {
+  display: flex;
+  height: 100%;
+  margin-left: 1px;
+
+  .summary {
+    height: 100%;
+    width: 30%;
+    margin-left: 1px;
+    background: rgba(0, 0, 0, 0.20);
+  }
+
+  .searchview {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    width: 70%;
+
+    &-list {
+      background: rgba(0, 0, 0, 0.20);
+      height: 100%;
+    }
+
+    &-bottombar {
+      height: 41px;
+      margin-top: 1px;
+      background: rgba(0, 0, 0, 0.20);
+
+      display: flex;
+      align-items: center; // does vertically center the desired content
+      //justify-content: center; // horizontally centers single line items
+      justify-content: space-between;
+
+      padding-left: 3px;
+      padding-right: 3px;
+
+      &-search, &-input, &-filter {
+        margin-left: 3px;
+        margin-right: 3px;
+      }
+
+      &-filter {
+        span {
+          margin-left: 15px;
+        }
+      }
+
+      button {
+        cursor: pointer;
+
+        line-height: 20px;
+        font-family: defaults.$font;
+        height: 29px;
+        font-size: 20px;
+        border: 1px solid white;
+        color: white;
+        background: rgba(0, 0, 0, 0.10);
+        width: 128px;
+      }
+
+      input {
+        font-family: defaults.$font;
+        height: 25px;
+        width: 100%;
+        font-size: 20px;
+        border: 1px solid white;
+        color: white;
+        background: rgba(0, 0, 0, 0.10);
+
+        &::placeholder {
+          color: white;
+          text-align: center;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+  }
+}

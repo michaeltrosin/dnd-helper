@@ -1,4 +1,7 @@
+@use 'src/defaults' as defaults;
+
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
+  font-family: defaults.$font;
+  color: white;
 }

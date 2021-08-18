@@ -1,7 +1,7 @@
 import { ChangeEvent, Component } from "react";
 import '@/utils/extensions';
-import { ISpell } from "./spell_model";
-import { Attribute, DurationUnit, RangeUnit, School, SpellClass, TimeUnit } from "./spell_types";
+import { ISpell } from "./model/spell_model";
+import { Attribute, DurationUnit, RangeUnit, School, SpellClass, TimeUnit } from "./model/spell_types";
 import './spell_editor.scss';
 declare type State = {
     editing: boolean;

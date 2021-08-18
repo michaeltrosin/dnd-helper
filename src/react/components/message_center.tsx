@@ -40,15 +40,15 @@ export class MessageCenter extends Component<Props, State> {
         }, 200);
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         if (this.timer_loop) {
             clearInterval(this.timer_loop);
         }
     }
 
-    render() {
+    render(): JSX.Element {
         return (
-            <div className="message_center">
+            <div className='message_center'>
                 {
                     this.state.messages.map(message => {
                         return (

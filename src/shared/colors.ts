@@ -1,0 +1,22 @@
+export const ThemeColors = [
+    '4B6584',
+    '778CA3',
+    'A5B1C2',
+    'D1D8E0',
+    '8854D0',
+    'A55EEA',
+    '3867D6',
+    '4B7BEC',
+    '2D98DA',
+    'A5AAF2',
+    '0FB9B1',
+    '2BCBBA',
+    '20BF68',
+    '26DE81',
+    'F7B731',
+    'FED330',
+    'FA8231',
+    'FD9644',
+    'EB3B5A',
+    'FC5C65'
+];

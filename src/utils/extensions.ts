@@ -6,12 +6,14 @@ declare global {
     }
 }
 
-String.prototype.empty = function () {
+// eslint-disable-next-line no-extend-native
+String.prototype.empty = function(): boolean {
     return this.trim() === '';
-}
+};
 
-String.prototype.notEmpty = function () {
+// eslint-disable-next-line no-extend-native
+String.prototype.notEmpty = function(): boolean {
     return !this.empty();
-}
+};
 
 export {};

@@ -16,7 +16,7 @@ type TPayload = {
 export class DialogChannel extends AbstractIpcChannel<TArgs, TPayload> {
     get name(): string {
         return Channels.Dialog;
-    };
+    }
 
     handle(win: Electron.BrowserWindow, event: Electron.IpcMainEvent, payload: TArgs): void {
         dialog.showMessageBox(win, {

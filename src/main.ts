@@ -4,6 +4,7 @@ import isDev from 'electron-is-dev';
 import {AbstractIpcChannel} from '@/shared/ipc';
 import {DialogChannel} from '@/electron/channels/dialog_channel';
 import {MessageQueueChannel} from '@/electron/channels/message_queue_channel';
+import {DisplayInformationChannel} from '@/electron/channels/display_information_channel';
 import {Files} from '@/electron/filesystem';
 import {updater} from '@/electron/updater';
 import {Logger} from '@/electron/logger';
@@ -13,13 +14,16 @@ let messages: MessageQueueChannel;
 
 const createWindow = (): void => {
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1920,
+        height: 1080,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: true
-        }
+        },
+        minHeight: 800,
+        minWidth: 600,
+        title: `DnD-Helper v${app.getVersion()}`
     });
     win.removeMenu();
     win.loadURL(
@@ -27,15 +31,19 @@ const createWindow = (): void => {
             ? 'http://localhost:9000'
             : `file://${__dirname}/index.html`,
     );
-    win.webContents.openDevTools();
+
+    if (isDev) {
+        win.webContents.openDevTools();
+    }
 
     registerIpcChannels([
         new DialogChannel(),
-        messages = new MessageQueueChannel()
+        messages = new MessageQueueChannel(),
+        new DisplayInformationChannel()
     ]);
 };
 
-function registerIpcChannels(ipcChannels: AbstractIpcChannel<any>[]) {
+function registerIpcChannels(ipcChannels: AbstractIpcChannel<any>[]): void {
     ipcChannels.forEach(channel => {
         ipcMain.on(channel.name, (event, args) => {
             channel.handle(win, event, args);

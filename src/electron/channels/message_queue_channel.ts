@@ -18,24 +18,24 @@ export class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
         sent_at: number;
     }> = new Map<number, { message: IMessage; length: number; sent_at: number }>();
 
-    current_index: number = 0;
+    current_index = 0;
 
     get name(): string {
         return Channels.MessageQueue;
     }
 
-    push_raw(message: IMessage, length: number = 2000) {
+    push_raw(message: IMessage, length: number = 2000): void {
         this.messages.set(this.current_index++, {
-            message: message,
-            length: length,
+            message,
+            length,
             sent_at: Date.now()
         });
     }
 
-    push(title: string, message: string, type: IMessageMessageType = 'info', length: number = 2000) {
+    push(title: string, message: string, type: IMessageMessageType = 'info', length: number = 2000): void {
         this.push_raw({
-            type: type,
-            title: title,
+            type,
+            title,
             content: message
         });
     }
@@ -63,7 +63,6 @@ export class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
             });
             this.resolve(event, result);
         } else if (args.method === 'post') {
-
             this.push_raw(args.data, args.length);
             this.resolve(event, []);
         }

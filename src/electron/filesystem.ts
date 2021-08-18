@@ -7,7 +7,7 @@ class Filesystem {
 
     RootFolder: string = Path.join(this.Appdata, app.getName(), '/data');
 
-    initialize() {
+    initialize(): void {
         if (!fs.existsSync(this.RootFolder)) {
             fs.mkdirSync(this.RootFolder);
         }

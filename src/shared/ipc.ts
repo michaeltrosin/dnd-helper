@@ -14,7 +14,7 @@ export abstract class AbstractIpcChannel<TArgs, TReturn = TArgs> {
 
     readonly resolve = (event: IpcMainEvent, payload: TReturn) => {
         event.sender.send(AbstractIpcChannel.response_name(this.name), {
-            payload: payload,
+            payload,
             result: ResultType.Resolved
         });
     };
@@ -34,14 +34,14 @@ type GetParamTypes<C extends AbstractIpcChannel<any, any>> = C extends AbstractI
 class IpcRequest {
     request<C extends AbstractIpcChannel<any, any>>(channel: string, args: GetParamTypes<C>[0]): Promise<GetParamTypes<C>[1]> {
         return new Promise<GetParamTypes<C>[1]>((resolve, reject) => {
-            ipcRenderer.once(AbstractIpcChannel.response_name(channel), (event, args: {
+            ipcRenderer.once(AbstractIpcChannel.response_name(channel), (event, cargs: {
                 payload: GetParamTypes<C>[1] | Error,
                 result: ResultType
             }) => {
-                if (args.result === ResultType.Resolved) {
-                    resolve(args.payload as GetParamTypes<C>[1]);
+                if (cargs.result === ResultType.Resolved) {
+                    resolve(cargs.payload as GetParamTypes<C>[1]);
                 } else {
-                    reject(args.payload as Error);
+                    reject(cargs.payload as Error);
                 }
             });
             ipcRenderer.send(channel, args);

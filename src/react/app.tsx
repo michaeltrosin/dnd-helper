@@ -1,24 +1,43 @@
-import React, {Component} from 'react';
+import React, {Component, CSSProperties} from 'react';
 
 import './app.scss';
-import {SpellComponent} from '@/react/components/spell/spell_component';
-import {MessageCenter} from '@/react/components/message_center';
+import {Sidebar} from '@/react/components/sidebar';
 
-type State = {};
+import logo from 'asset/resource/icons/dnd.png';
+import {SpellView} from '@/react/components/spell/spell_view';
+import {ThemeColors} from '@/shared/colors';
+import {CustomStyles} from '@/react/custom_styles';
+
+type State = {
+    style_color: string;
+};
 
 class App extends Component<any, State> {
     constructor(props: any) {
         super(props);
+
+        this.state = {
+            style_color: ThemeColors[0]
+        };
     }
 
-    render() {
+    render(): JSX.Element {
+        const style: CustomStyles = {
+            '--background-color': `#${this.state.style_color}`
+        };
         return (
-            <div id="app">
-                <MessageCenter/>
-                <div id="wrapper">
-                    <SpellComponent/>
+            <>
+                <div className='background'>
+                    <img src={logo} alt=''/>
                 </div>
-            </div>
+                <div id='app' style={style}>
+                    {/*<MessageCenter/>*/}
+                    <Sidebar change_page_cb={page => console.log(page)} buttons={['spells', 'settings']}/>
+                    <div id='wrapper'>
+                        <SpellView/>
+                    </div>
+                </div>
+            </>
         );
     }
 }

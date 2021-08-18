@@ -23,7 +23,7 @@
     },
     "max-classes-per-file": false,
     "max-line-length": [
-      true,
+      false,
       140
     ],
     "member-ordering": [
@@ -142,9 +142,6 @@
       "element",
       "app",
       "kebab-case"
-    ],
-    "interface-name": {
-      "options": "always-prefix"
-    }
+    ]
   }
 }

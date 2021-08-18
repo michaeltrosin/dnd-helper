@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { ISpell } from "./spell_model";
+import { ISpell } from "./model/spell_model";
 import '@/utils/extensions';
 declare type Props = {
     spell: ISpell;

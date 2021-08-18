@@ -6,7 +6,7 @@ export interface ISpell {
     name: {
         english: string;
         german: string;
-    }
+    };
 
     classes: string[];
 
@@ -38,7 +38,7 @@ export interface ISpell {
     range: {
         format: string;
         value: number;
-    }
+    };
 
     // Ziel
     target: string;
@@ -51,7 +51,7 @@ export interface ISpell {
         somatic: boolean;
         // Material
         material: string;
-    }
+    };
 
     attributes: string;
 
@@ -62,7 +62,7 @@ export interface ISpell {
         format: string;
         value: number;
         additional: string;
-    }
+    };
 
     // Beschreibung
     description: string;

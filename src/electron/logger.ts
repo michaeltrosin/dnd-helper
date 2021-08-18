@@ -1,5 +1,5 @@
 class LoggerImpl {
-    initialize() {
+    initialize(): void {
     }
 }
 
