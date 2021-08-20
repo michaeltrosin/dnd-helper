@@ -14,7 +14,18 @@ export const updater = {
             });
         });
 
+        autoUpdater.on('update-available', () => {
+            dialog.showMessageBox(win, {
+                title: 'Update',
+                type: 'info',
+                message: 'Update gefunden!',
+                detail: 'Es wird jetzt heruntergeladen.',
+                buttons: ['Ok']
+            }).then();
+        });
+
         autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+            re_ask = false;
             dialog.showMessageBox(win, {
                 title: 'Update',
                 type: 'info',
@@ -24,8 +35,6 @@ export const updater = {
             }).then(selected => {
                 if (selected.response === 0) {
                     autoUpdater.quitAndInstall(false, true);
-                } else {
-                    re_ask = false;
                 }
             });
         });

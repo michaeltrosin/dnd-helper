@@ -7,6 +7,7 @@ import logo from 'asset/resource/icons/dnd.png';
 import {SpellView} from '@/react/components/spell/spell_view';
 import {ThemeColors} from '@/shared/colors';
 import {CustomStyles} from '@/react/custom_styles';
+import {MessageCenter} from '@/react/components/message_center';
 
 type State = {
     style_color: string;
