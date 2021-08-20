@@ -1,5 +1,6 @@
 @use './spell_bottombar';
 @use './spell_flex';
+@use 'src/defaults' as defaults;
 
 .spell-wrapper {
   margin-left: 1px;
@@ -17,11 +18,49 @@
     position: absolute;
     right: 17px;
     bottom: 39px;
-    background: rgba(0, 0, 0, 0.20);
+    z-index: 1;
+    background: defaults.$background-color;
+
+    &-padding {
+      background: rgba(0, 0, 0, 0.20);
+    }
+
+    &__table {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
 
     &__p {
       margin: 0;
     }
+
+    &__button {
+      cursor: pointer;
+      margin-left: 3px;
+      margin-right: 3px;
+
+      box-sizing: border-box;
+      line-height: 10px;
+      font-family: defaults.$font;
+      height: 20px;
+      font-size: 14px;
+      border: 1px solid white;
+      color: white;
+      background: rgba(0, 0, 0, 0.10);
+      width: 100%;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.20);
+      }
+
+      &:active {
+        background: rgba(0, 0, 0, 0.40);
+      }
+    }
+  }
+
+  &__list {
+    height: calc(100% - 40px) !important;
   }
 
   &__table {

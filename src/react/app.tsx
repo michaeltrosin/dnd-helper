@@ -1,4 +1,4 @@
-import React, {Component, CSSProperties} from 'react';
+import React, {Component} from 'react';
 
 import './app.scss';
 import {Sidebar} from '@/react/components/sidebar';

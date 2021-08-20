@@ -4,7 +4,7 @@ import './spell_view.scss';
 
 import {ISpell} from '@/react/components/spell/model/spell_model';
 import '@/utils/extensions';
-import {School, schools, spell_classes, SpellClass} from '@/react/components/spell/model/spell_types';
+import {School, SpellClass, SpellTypes} from '@/react/components/spell/model/spell_types';
 import {hash} from '@/utils';
 import {SpellSumary} from '@/react/components/spell/spell_summary';
 import {SpellEditor} from '@/react/components/spell/spell_editor';
@@ -39,8 +39,8 @@ export class SpellView extends Component<any, State> {
 
             filter: {
                 levels: spell_levels,
-                schools: Object.keys(schools).map((value) => value as School),
-                classes: Object.keys(spell_classes).map((value) => value as SpellClass)
+                schools: Object.keys(SpellTypes.schools).map((value) => value as School),
+                classes: Object.keys(SpellTypes.classes).map((value) => value as SpellClass)
             }
         };
 
@@ -186,7 +186,7 @@ export class SpellView extends Component<any, State> {
                     !this.state.edit_mode &&
                     <div className='spell-wrapper spell-search'>
                       <div className='spell-flex'>
-                        <div className='spell-flex__child'>
+                        <div className='spell-flex__child spell-search__list'>
                           <table className='spell-search__table'>
                             <thead className='spell-search__table-head'>
                             <tr className='spell-search__table-head-row'>
@@ -216,10 +216,12 @@ export class SpellView extends Component<any, State> {
                                             <td>{spell.name.german}</td>
                                             <td>
                                                 {
-                                                    spell.classes.map((cls, index) => {
+                                                    spell.classes.sort((a, b) => {
+                                                        return SpellTypes.classes[a as SpellClass].localeCompare(SpellTypes.classes[b as SpellClass]);
+                                                    }).map((cls, index) => {
                                                         return (
                                                             <span key={index}>
-                                                              {spell_classes[cls as SpellClass]}{index === spell.classes.length - 1 ? '' : ', '}
+                                                              {SpellTypes.classes[cls as SpellClass]}{index === spell.classes.length - 1 ? '' : ', '}
                                                             </span>
                                                         );
                                                     })
@@ -235,125 +237,137 @@ export class SpellView extends Component<any, State> {
                           {
                               this.state.filter_visible &&
                               <div className='spellfilter'>
-                                <table>
-                                  <thead>
-                                  <tr>
-                                    <th>
-                                      <p className='spellfilter__p'>Level</p>
-                                    </th>
-                                    <th>
-                                      <p className='spellfilter__p'>Klasse</p>
-                                    </th>
-                                    <th>
-                                      <p className='spellfilter__p'>Schule</p>
-                                    </th>
-                                  </tr>
-                                  </thead>
-                                  <tbody>
-                                  <tr>
-                                    <td>
-                                        {
-                                            spell_levels.map(level => {
-                                                return (
-                                                    <p className='spellfilter__p' key={level}>
-                                                        <input onChange={e => {
-                                                            this.change_filter_levels(level);
-                                                        }} checked={this.state.filter.levels.includes(level)}
-                                                               type='checkbox'/>{level}
-                                                    </p>
-                                                );
-                                            })
-                                        }
-                                      <button onClick={() => {
-                                          this.setState((prev) => ({
-                                              filter: {
-                                                  ...prev.filter,
-                                                  levels: []
-                                              }
-                                          }));
-                                      }} className='spellfilter__button'>Keine
-                                      </button>
-                                      <button onClick={() => {
-                                          this.setState((prev) => ({
-                                              filter: {
-                                                  ...prev.filter,
-                                                  levels: spell_levels
-                                              }
-                                          }));
-                                      }} className='spellfilter__button'>Alle
-                                      </button>
-                                    </td>
-                                    <td>
-                                        {
-                                            Object.keys(spell_classes).sort((a, b) => {
-                                                return spell_classes[a as SpellClass].localeCompare(spell_classes[b as SpellClass]);
-                                            }).map(cls => {
-                                                return (
-                                                    <p className='spellfilter__p' key={cls}>
-                                                        <input onChange={e => {
-                                                            this.change_filter_classes(cls as SpellClass);
-                                                        }} checked={this.state.filter.classes.includes(cls as SpellClass)}
-                                                               type='checkbox'/>{spell_classes[cls as SpellClass]}
-                                                    </p>
-                                                );
-                                            })
-                                        }
-                                      <button onClick={() => {
-                                          this.setState((prev) => ({
-                                              filter: {
-                                                  ...prev.filter,
-                                                  classes: []
-                                              }
-                                          }));
-                                      }} className='spellfilter__button'>Keine
-                                      </button>
-                                      <button onClick={() => {
-                                          this.setState((prev) => ({
-                                              filter: {
-                                                  ...prev.filter,
-                                                  classes: Object.keys(spell_classes).map((value) => value as SpellClass)
-                                              }
-                                          }));
-                                      }} className='spellfilter__button'>Alle
-                                      </button>
-                                    </td>
-                                    <td>
-                                        {
-                                            Object.keys(schools).sort((a, b) => {
-                                                return schools[a as School].localeCompare(schools[b as School]);
-                                            }).map(school => {
-                                                return (
-                                                    <p className='spellfilter__p' key={school}>
-                                                        <input onChange={e => {
-                                                            this.change_filter_schools(school as School);
-                                                        }} checked={this.state.filter.schools.includes(school as School)}
-                                                               type='checkbox'/>{schools[school as School]}
-                                                    </p>
-                                                );
-                                            })
-                                        }
-                                      <button onClick={() => {
-                                          this.setState((prev) => ({
-                                              filter: {
-                                                  ...prev.filter,
-                                                  schools: []
-                                              }
-                                          }));
-                                      }} className='spellfilter__button'>Keine
-                                      </button>
-                                      <button onClick={() => {
-                                          this.setState((prev) => ({
-                                              filter: {
-                                                  ...prev.filter,
-                                                  schools: Object.keys(schools).map((value) => value as School)
-                                              }
-                                          }));
-                                      }} className='spellfilter__button'>Alle
-                                      </button>
-                                    </td>
-                                  </tr>
-                                  </tbody>
-                                </table>
+                                <div className='spellfilter-padding'>
+
+                                  <table className='spellfilter__table'>
+                                    <thead>
+                                    <tr>
+                                      <th>
+                                        <p className='spellfilter__p'>Level</p>
+                                      </th>
+                                      <th>
+                                        <p className='spellfilter__p'>Klasse</p>
+                                      </th>
+                                      <th>
+                                        <p className='spellfilter__p'>Schule</p>
+                                      </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                      <td>
+                                          {
+                                              spell_levels.map(level => {
+                                                  return (
+                                                      <p className='spellfilter__p' key={level}>
+                                                          <input onChange={() => {
+                                                              this.change_filter_levels(level);
+                                                          }} checked={this.state.filter.levels.includes(level)}
+                                                                 type='checkbox'/>{level}
+                                                      </p>
+                                                  );
+                                              })
+                                          }
+                                      </td>
+                                      <td>
+                                          {
+                                              Object.keys(SpellTypes.classes).sort((a, b) => {
+                                                  return SpellTypes.classes[a as SpellClass].localeCompare(SpellTypes.classes[b as SpellClass]);
+                                              }).map(cls => {
+                                                  return (
+                                                      <p className='spellfilter__p' key={cls}>
+                                                          <input onChange={() => {
+                                                              this.change_filter_classes(cls as SpellClass);
+                                                          }} checked={this.state.filter.classes.includes(cls as SpellClass)}
+                                                                 type='checkbox'/>{SpellTypes.classes[cls as SpellClass]}
+                                                      </p>
+                                                  );
+                                              })
+                                          }
+                                      </td>
+                                      <td>
+                                          {
+                                              Object.keys(SpellTypes.schools).sort((a, b) => {
+                                                  return SpellTypes.schools[a as School].localeCompare(SpellTypes.schools[b as School]);
+                                              }).map(school => {
+                                                  return (
+                                                      <p className='spellfilter__p' key={school}>
+                                                          <input onChange={() => {
+                                                              this.change_filter_schools(school as School);
+                                                          }} checked={this.state.filter.schools.includes(school as School)}
+                                                                 type='checkbox'/>{SpellTypes.schools[school as School]}
+                                                      </p>
+                                                  );
+                                              })
+                                          }
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>
+
+                                        <button onClick={() => {
+                                            this.setState((prev) => ({
+                                                filter: {
+                                                    ...prev.filter,
+                                                    levels: spell_levels
+                                                }
+                                            }));
+                                        }} className='spellfilter__button'>Alle
+                                        </button>
+                                        <button onClick={() => {
+                                            this.setState((prev) => ({
+                                                filter: {
+                                                    ...prev.filter,
+                                                    levels: []
+                                                }
+                                            }));
+                                        }} className='spellfilter__button'>Keine
+                                        </button>
+                                      </td>
+                                      <td>
+                                        <button onClick={() => {
+                                            this.setState((prev) => ({
+                                                filter: {
+                                                    ...prev.filter,
+                                                    classes: Object.keys(SpellTypes.classes).map((value) => value as SpellClass)
+                                                }
+                                            }));
+                                        }} className='spellfilter__button'>Alle
+                                        </button>
+                                        <button onClick={() => {
+                                            this.setState((prev) => ({
+                                                filter: {
+                                                    ...prev.filter,
+                                                    classes: []
+                                                }
+                                            }));
+                                        }} className='spellfilter__button'>Keine
+                                        </button>
+                                      </td>
+                                      <td>
+                                        <button onClick={() => {
+                                            this.setState((prev) => ({
+                                                filter: {
+                                                    ...prev.filter,
+                                                    schools: Object.keys(SpellTypes.schools).map((value) => value as School)
+                                                }
+                                            }));
+                                        }} className='spellfilter__button'>Alle
+                                        </button>
+                                        <button onClick={() => {
+                                            this.setState((prev) => ({
+                                                filter: {
+                                                    ...prev.filter,
+                                                    schools: []
+                                                }
+                                            }));
+                                        }} className='spellfilter__button'>Keine
+                                        </button>
+                                      </td>
+                                    </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
                               </div>
                           }
                         <div className='spellbottombar'>
@@ -420,5 +434,4 @@ export class SpellView extends Component<any, State> {
             </div>
         );
     }
-
 }

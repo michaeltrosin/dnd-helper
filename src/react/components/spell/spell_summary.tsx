@@ -1,18 +1,5 @@
 import {Component} from 'react';
-import {
-    Attribute,
-    attributes,
-    duration_units,
-    DurationUnit,
-    range_units,
-    RangeUnit,
-    School,
-    schools,
-    spell_classes,
-    SpellClass,
-    time_units,
-    TimeUnit
-} from '@/react/components/spell/model/spell_types';
+import {Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellTypes, TimeUnit} from '@/react/components/spell/model/spell_types';
 
 import '@/utils/extensions';
 import './spell_summary.scss';
@@ -68,9 +55,9 @@ export class SpellSumary extends Component<Props, any> {
                                     <ul>
                                         {
                                             this.props.spell.classes.sort((a, b) => {
-                                                return spell_classes[a as SpellClass].localeCompare(spell_classes[b as SpellClass]);
+                                                return SpellTypes.classes[a as SpellClass].localeCompare(SpellTypes.classes[b as SpellClass]);
                                             }).map(cls => {
-                                                return (<li key={hash(cls)}>{spell_classes[cls as SpellClass]}</li>);
+                                                return (<li key={hash(cls)}>{SpellTypes.classes[cls as SpellClass]}</li>);
                                             })
                                         }
                                     </ul>
@@ -80,7 +67,7 @@ export class SpellSumary extends Component<Props, any> {
                     <tr>
                         <td>Schule:</td>
                         <td>
-                            {schools[this.props.spell.school as School]}
+                            {SpellTypes.schools[this.props.spell.school as School]}
                         </td>
                     </tr>
                     <tr>
@@ -93,21 +80,21 @@ export class SpellSumary extends Component<Props, any> {
                         <td>Zeitaufwand:</td>
                         <td>
                             {(
-                                time_units[this.props.spell.time_consumption.format as TimeUnit] === time_units.minute ||
-                                time_units[this.props.spell.time_consumption.format as TimeUnit] === time_units.hour ||
-                                time_units[this.props.spell.time_consumption.format as TimeUnit] === time_units.round ||
-                                time_units[this.props.spell.time_consumption.format as TimeUnit] === time_units.action ||
-                                time_units[this.props.spell.time_consumption.format as TimeUnit] === time_units.bonus_action
-                            ) ? this.props.spell.time_consumption.value : ''} {time_units[this.props.spell.time_consumption.format as TimeUnit].replace('...', this.props.spell.time_consumption.value.toString())}
+                                SpellTypes.time_units[this.props.spell.time_consumption.format as TimeUnit] === SpellTypes.time_units.minute ||
+                                SpellTypes.time_units[this.props.spell.time_consumption.format as TimeUnit] === SpellTypes.time_units.hour ||
+                                SpellTypes.time_units[this.props.spell.time_consumption.format as TimeUnit] === SpellTypes.time_units.round ||
+                                SpellTypes.time_units[this.props.spell.time_consumption.format as TimeUnit] === SpellTypes.time_units.action ||
+                                SpellTypes.time_units[this.props.spell.time_consumption.format as TimeUnit] === SpellTypes.time_units.bonus_action
+                            ) ? this.props.spell.time_consumption.value : ''} {SpellTypes.time_units[this.props.spell.time_consumption.format as TimeUnit].replace('...', this.props.spell.time_consumption.value.toString())}
                         </td>
                     </tr>
                     <tr>
                         <td>Reichweite:</td>
                         <td>
                             {(
-                                range_units[this.props.spell.range.format as RangeUnit] === range_units.meter ||
-                                range_units[this.props.spell.range.format as RangeUnit] === range_units.feet
-                            ) ? this.props.spell.range.value : ''} {range_units[this.props.spell.range.format as RangeUnit].replace('...', this.props.spell.range.value.toString())}
+                                SpellTypes.range_units[this.props.spell.range.format as RangeUnit] === SpellTypes.range_units.meter ||
+                                SpellTypes.range_units[this.props.spell.range.format as RangeUnit] === SpellTypes.range_units.feet
+                            ) ? this.props.spell.range.value : ''} {SpellTypes.range_units[this.props.spell.range.format as RangeUnit].replace('...', this.props.spell.range.value.toString())}
                         </td>
                     </tr>
                     <tr>
@@ -128,9 +115,9 @@ export class SpellSumary extends Component<Props, any> {
                         <td>Dauer:</td>
                         <td>
                             {(
-                                duration_units[this.props.spell.duration.format as DurationUnit] === duration_units.hour ||
-                                duration_units[this.props.spell.duration.format as DurationUnit] === duration_units.minute
-                            ) ? this.props.spell.duration.value : ''} {duration_units[this.props.spell.duration.format as DurationUnit]}
+                                SpellTypes.duration_units[this.props.spell.duration.format as DurationUnit] === SpellTypes.duration_units.hour ||
+                                SpellTypes.duration_units[this.props.spell.duration.format as DurationUnit] === SpellTypes.duration_units.minute
+                            ) ? this.props.spell.duration.value : ''} {SpellTypes.duration_units[this.props.spell.duration.format as DurationUnit]}
                         </td>
                     </tr>
                     <tr>
@@ -150,7 +137,7 @@ export class SpellSumary extends Component<Props, any> {
                     <tr>
                         <td>Attribut:</td>
                         <td>
-                            {attributes[this.props.spell.attributes as Attribute]}
+                            {SpellTypes.attributes[this.props.spell.attributes as Attribute]}
                         </td>
                     </tr>
                     <tr>

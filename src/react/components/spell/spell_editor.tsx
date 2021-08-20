@@ -1,17 +1,6 @@
 import {Component} from 'react';
 import {ISpell} from '@/react/components/spell/model/spell_model';
-import {
-    Attribute, attributes,
-    duration_units,
-    DurationUnit,
-    range_units,
-    RangeUnit,
-    School,
-    schools, spell_classes,
-    SpellClass,
-    time_units,
-    TimeUnit
-} from '@/react/components/spell/model/spell_types';
+import {Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellTypes, TimeUnit} from '@/react/components/spell/model/spell_types';
 
 import '@/utils/extensions';
 import './spell_editor.scss';
@@ -189,7 +178,7 @@ export class SpellEditor extends Component<Props, State> {
 
         this.setState({
             classes: classes.sort((a, b) => {
-                return spell_classes[a].localeCompare(spell_classes[b]);
+                return SpellTypes.classes[a].localeCompare(SpellTypes.classes[b]);
             })
         });
     }
@@ -309,15 +298,15 @@ export class SpellEditor extends Component<Props, State> {
                                 <td>Klassen</td>
                             </tr>
                             {
-                                Object.keys(spell_classes).sort((a, b) => {
-                                    return spell_classes[a as SpellClass].localeCompare(spell_classes[b as SpellClass]);
+                                Object.keys(SpellTypes.classes).sort((a, b) => {
+                                    return SpellTypes.classes[a as SpellClass].localeCompare(SpellTypes.classes[b as SpellClass]);
                                 }).map(cls => {
                                     return (
                                         <tr key={cls}>
-                                            <td>{spell_classes[cls as SpellClass]}</td>
+                                            <td>{SpellTypes.classes[cls as SpellClass]}</td>
                                             <td>
                                                 <input checked={this.state.classes.some(c => c === cls as SpellClass)}
-                                                       onChange={e => {
+                                                       onChange={() => {
                                                            this.change_class(cls as SpellClass);
                                                        }} type='checkbox'/>
                                             </td>
@@ -335,9 +324,9 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='school'>
                                         {
-                                            Object.keys(schools).map(school => {
+                                            Object.keys(SpellTypes.schools).map(school => {
                                                 return (
-                                                    <option key={school} value={school}>{schools[school as School]}</option>
+                                                    <option key={school} value={school}>{SpellTypes.schools[school as School]}</option>
                                                 );
                                             })
                                         }
@@ -369,10 +358,10 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='time_consumption'>
                                         {
-                                            Object.keys(time_units).map(unit => {
+                                            Object.keys(SpellTypes.time_units).map(unit => {
                                                 return (
                                                     <option key={unit}
-                                                            value={unit}>{time_units[unit as TimeUnit].replace('...', this.state.time_consumption_value.toString())}</option>
+                                                            value={unit}>{SpellTypes.time_units[unit as TimeUnit].replace('...', this.state.time_consumption_value.toString())}</option>
                                                 );
                                             })
                                         }
@@ -395,10 +384,10 @@ export class SpellEditor extends Component<Props, State> {
                                         console.log(e.target.value);
                                     }} name='range_units'>
                                         {
-                                            Object.keys(range_units).map(unit => {
+                                            Object.keys(SpellTypes.range_units).map(unit => {
                                                 return (
                                                     <option key={unit}
-                                                            value={unit}>{range_units[unit as RangeUnit].replace('...', this.state.range_value.toString())}</option>
+                                                            value={unit}>{SpellTypes.range_units[unit as RangeUnit].replace('...', this.state.range_value.toString())}</option>
                                                 );
                                             })
                                         }
@@ -464,9 +453,9 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='duration'>
                                         {
-                                            Object.keys(duration_units).map(unit => {
+                                            Object.keys(SpellTypes.duration_units).map(unit => {
                                                 return (
-                                                    <option key={unit} value={unit}>{duration_units[unit as DurationUnit]}</option>
+                                                    <option key={unit} value={unit}>{SpellTypes.duration_units[unit as DurationUnit]}</option>
                                                 );
                                             })
                                         }
@@ -502,9 +491,9 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='attribute'>
                                         {
-                                            Object.keys(attributes).map(attribute => {
+                                            Object.keys(SpellTypes.attributes).map(attribute => {
                                                 return (
-                                                    <option key={attribute} value={attribute}>{attributes[attribute as Attribute]}</option>
+                                                    <option key={attribute} value={attribute}>{SpellTypes.attributes[attribute as Attribute]}</option>
                                                 );
                                             })
                                         }
