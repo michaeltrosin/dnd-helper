@@ -1,0 +1,18 @@
+@use './spell_bottombar';
+@use './spell_flex';
+
+.spell-editor {
+  width: 60%;
+
+  .spell-flex__child {
+    overflow-y: auto;
+
+    td {
+      vertical-align: top;
+    }
+  }
+
+  &__table-hr {
+    height: 10px;
+  }
+}

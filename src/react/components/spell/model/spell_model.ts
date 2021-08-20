@@ -1,4 +1,6 @@
 export interface ISpell {
+    _id?: string;
+
     // Level vom Zauber
     level: number;
 

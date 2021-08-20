@@ -1,0 +1,15 @@
+.spell-summary {
+  overflow-y: auto;
+
+  td {
+    vertical-align: top;
+  }
+
+  &__id {
+    color: lightgray;
+  }
+
+  &__description {
+    word-break: break-word;
+  }
+}

@@ -1,82 +1,95 @@
-@use 'src/defaults' as defaults;
+@use './spell_bottombar';
+@use './spell_flex';
 
-#spellview {
-  display: flex;
-  height: 100%;
+.spell-wrapper {
   margin-left: 1px;
+}
 
-  .summary {
-    height: 100%;
-    width: 30%;
-    margin-left: 1px;
+.spell-summary_wrapper {
+  width: 40%;
+}
+
+.spell-search {
+  width: 60%;
+  position: relative;
+
+  .spellfilter {
+    position: absolute;
+    right: 17px;
+    bottom: 39px;
     background: rgba(0, 0, 0, 0.20);
+
+    &__p {
+      margin: 0;
+    }
   }
 
-  .searchview {
+  &__table {
     display: flex;
-    flex-direction: column;
-
+    flex-flow: column;
     height: 100%;
-    width: 70%;
+    width: 100%;
 
-    &-list {
-      background: rgba(0, 0, 0, 0.20);
-      height: 100%;
+    &-level {
+      width: 8%;
+
+      text-align: center;
     }
 
-    &-bottombar {
-      height: 41px;
-      margin-top: 1px;
+    &-head {
       background: rgba(0, 0, 0, 0.20);
+      height: 40px;
+      margin-bottom: 1px;
+      text-align: left;
+      width: 100%;
 
-      display: flex;
-      align-items: center; // does vertically center the desired content
-      //justify-content: center; // horizontally centers single line items
-      justify-content: space-between;
-
-      padding-left: 3px;
-      padding-right: 3px;
-
-      &-search, &-input, &-filter {
-        margin-left: 3px;
-        margin-right: 3px;
+      &-row {
+        width: calc(100% - 17px);
       }
 
-      &-filter {
-        span {
-          margin-left: 15px;
+      &-spacing {
+        width: 17px;
+      }
+
+      &-content {
+        user-select: none;
+
+        &.clickable {
+          &:hover {
+            background: rgba(0, 0, 0, 0.30);
+            cursor: pointer;
+          }
+
+          &:active {
+            background: rgba(0, 0, 0, 0.40);
+          }
         }
       }
+    }
 
-      button {
-        cursor: pointer;
+    &-head, &-body-row {
+      display: table;
+      table-layout: fixed;
+    }
 
-        line-height: 20px;
-        font-family: defaults.$font;
-        height: 29px;
-        font-size: 20px;
-        border: 1px solid white;
-        color: white;
-        background: rgba(0, 0, 0, 0.10);
-        width: 128px;
-      }
+    &-body {
+      flex: 1 1 auto;
+      display: block;
+      overflow-y: scroll;
 
-      input {
-        font-family: defaults.$font;
-        height: 25px;
+      &-row {
         width: 100%;
-        font-size: 20px;
-        border: 1px solid white;
-        color: white;
-        background: rgba(0, 0, 0, 0.10);
+        background: rgba(0, 0, 0, 0.20);
+        margin-bottom: 1px;
+        user-select: none;
 
-        &::placeholder {
-          color: white;
-          text-align: center;
+        &:hover {
+          background: rgba(0, 0, 0, 0.30);
+          cursor: pointer;
         }
 
-        &:focus {
-          outline: none;
+        &:active {
+          background: rgba(0, 0, 0, 0.40);
         }
       }
     }

@@ -1,4 +1,4 @@
-#sidebar {
+.sidebar {
   width: 80px;
   height: 100%;
 
@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
 
-  .component {
+  &__component {
     width: 100%;
     height: 80px;
     position: relative;
@@ -23,13 +23,13 @@
     }
   }
 
-  .btn {
+  &__button {
     display: flex;
     align-items: center; // does vertically center the desired content
     justify-content: center; // horizontally centers single line items
     font-size: 20px;
 
-    .title {
+    &__title {
       pointer-events: none;
       user-select: none;
     }
@@ -38,13 +38,17 @@
       cursor: pointer;
       background: rgba(0, 0, 0, 0.12);
     }
+
+    &:active {
+      background: rgba(0, 0, 0, 0.06);
+    }
   }
 
   .bottom {
     margin-top: auto;
   }
 
-  .icon {
+  &__icon {
     user-select: none;
     pointer-events: none;
 

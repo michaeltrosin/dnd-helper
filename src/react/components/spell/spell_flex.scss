@@ -1,0 +1,15 @@
+.spell-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  &__child {
+    height: 100%;
+    background: rgba(0, 0, 0, 0.20);
+  }
+
+  &-horizontal {
+    flex-direction: row;
+  }
+}

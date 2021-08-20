@@ -1,3 +1,4 @@
+
 export const spell_classes = {
     artificer: 'Erfinder',
     bard: 'Barde',
@@ -24,9 +25,22 @@ export const time_units = {
     bonus_action: 'Bonus Aktion',
     hour: 'Stunde/-n',
     minute: 'Minute/-n',
+    up_to_minute: 'Bis zu ... Minute/-n',
+    up_to_hour: 'Bis zu ... Stunde/-n',
+    end_of_round: 'Ende der Runde',
+    round: 'Runde/-n',
 };
 export const range_units = {
     self: 'Selbst',
+
+    self_cone_meter: 'Selbst (...m großer Kegel)',
+    self_radius_meter: 'Selbst (...m großer Radius)',
+    self_cube_meter: 'Selbst (...m großer Würfel)',
+
+    self_cone_feet: 'Selbst (...ft. großer Kegel)',
+    self_radius_feet: 'Selbst (...ft. großer Radius)',
+    self_cube_feet: 'Selbst (...ft. großer Würfel)',
+
     touch: 'Berührung',
     meter: 'Meter',
     feet: 'Fuß',
