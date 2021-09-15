@@ -1,0 +1,18 @@
+.flex {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 100%;
+
+  &__child {
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.20);
+  }
+
+  &-withbottombar {
+    height: calc(100% - 40px) !important;
+  }
+}

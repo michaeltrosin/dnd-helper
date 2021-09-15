@@ -1,0 +1,20 @@
+.SplitPane {
+  position: relative !important;
+
+  .Resizer {
+    //background: rgba(0, 0, 0, 0.05);
+    z-index: 2;
+
+    &.vertical {
+      cursor: col-resize;
+      width: 3px;
+      height: 100%;
+    }
+
+    &.horizontal {
+      cursor: row-resize;
+      height: 3px;
+      width: 100%;
+    }
+  }
+}
