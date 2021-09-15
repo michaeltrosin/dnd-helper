@@ -1,17 +1,19 @@
-import {autoUpdater} from 'electron-updater';
 import {BrowserWindow, dialog} from 'electron';
+import {autoUpdater} from 'electron-updater';
 
 let re_ask = true;
 
-export const updater = {
-    begin_update_checking(win: BrowserWindow): void {
+class Updater {
+    private constructor() {
+    }
+
+    static begin_update_checking(win: BrowserWindow): void {
         autoUpdater.on('error', (err) => {
             dialog.showMessageBox(win, {
                 title: 'Update',
                 type: 'error',
                 message: 'Fehler: ' + err
-            }).then(() => {
-            });
+            }).then();
         });
 
         autoUpdater.on('update-available', () => {
@@ -40,9 +42,11 @@ export const updater = {
         });
         setInterval(() => {
             if (re_ask) {
-                autoUpdater.checkForUpdates();
+                autoUpdater.checkForUpdates().then();
             }
         }, 60000);
-        autoUpdater.checkForUpdates();
+        autoUpdater.checkForUpdates().then();
     }
-};
+}
+
+export {Updater};

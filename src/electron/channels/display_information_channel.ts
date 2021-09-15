@@ -1,11 +1,11 @@
-import {AbstractIpcChannel} from '@/shared/ipc';
 import {Channels} from '@/shared/channels';
+import {AbstractIpcChannel} from '@/shared/ipc';
+import {multiline} from '@/utils';
 import {app, dialog} from 'electron';
 import isDev from 'electron-is-dev';
-import {multiline} from '@/utils';
 import * as os from 'os';
 
-export class DisplayInformationChannel extends AbstractIpcChannel<any> {
+class DisplayInformationChannel extends AbstractIpcChannel<any> {
     get name(): string {
         return Channels.DisplayInformation;
     }
@@ -27,3 +27,5 @@ export class DisplayInformationChannel extends AbstractIpcChannel<any> {
         });
     }
 }
+
+export {DisplayInformationChannel};

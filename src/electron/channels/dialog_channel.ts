@@ -1,5 +1,5 @@
-import {AbstractIpcChannel} from '@/shared/ipc';
 import {Channels} from '@/shared/channels';
+import {AbstractIpcChannel} from '@/shared/ipc';
 import {dialog} from 'electron';
 
 type TArgs = {
@@ -13,7 +13,7 @@ type TPayload = {
     selected_index: number;
 };
 
-export class DialogChannel extends AbstractIpcChannel<TArgs, TPayload> {
+class DialogChannel extends AbstractIpcChannel<TArgs, TPayload> {
     get name(): string {
         return Channels.Dialog;
     }
@@ -31,3 +31,5 @@ export class DialogChannel extends AbstractIpcChannel<TArgs, TPayload> {
         });
     }
 }
+
+export {DialogChannel};

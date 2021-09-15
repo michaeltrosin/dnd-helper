@@ -1,12 +1,13 @@
-import {Component} from 'react';
-import {ISpell} from '@/react/components/spell/model/spell_model';
-import {Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellTypes, TimeUnit} from '@/react/components/spell/model/spell_types';
+import {DialogChannel} from '@/electron/channels/dialog_channel';
+import {ISpell} from '@/react/components/spell/types/spell';
+import {Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellConstants, TimeUnit} from '@/react/components/spell/types/spell_types';
+import '@/react/styles/spell_editor.scss';
+import {Channels} from '@/shared/channels';
+import {ipc_request} from '@/shared/ipc';
+import {SourceBook, SourceBooks, SourceBooksSpell} from '@/shared/source_books';
 
 import '@/utils/extensions';
-import './spell_editor.scss';
-import {Ipc} from '@/shared/ipc';
-import {DialogChannel} from '@/electron/channels/dialog_channel';
-import {Channels} from '@/shared/channels';
+import {Component} from 'react';
 
 type Props = {
     to_edit: ISpell | undefined;
@@ -19,6 +20,7 @@ type State = {
     mode: 'edit' | 'new';
     _id: string;
 
+    source_book: SourceBook;
     level: number;
     name_eng: string;
     name_ger: string;
@@ -58,6 +60,8 @@ export class SpellEditor extends Component<Props, State> {
                 mode: 'edit',
                 _id: this.props.to_edit._id ? this.props.to_edit._id : '',
 
+                source_book: this.props.to_edit.source_book as SourceBook,
+
                 components_verbal: this.props.to_edit.components.verbal,
                 components_material: this.props.to_edit.components.material,
                 components_somatic: this.props.to_edit.components.somatic,
@@ -86,6 +90,7 @@ export class SpellEditor extends Component<Props, State> {
 
                 _id: '',
 
+                source_book: 'players_handbook',
                 range_value: 0,
                 range_format: 'meter',
                 name_ger: '',
@@ -121,7 +126,7 @@ export class SpellEditor extends Component<Props, State> {
     build_spell(): ISpell {
         return {
             _id: this.state._id,
-
+            source_book: this.state.source_book,
             level: this.state.level,
             range: {
                 format: this.state.range_format,
@@ -178,7 +183,7 @@ export class SpellEditor extends Component<Props, State> {
 
         this.setState({
             classes: classes.sort((a, b) => {
-                return SpellTypes.classes[a].localeCompare(SpellTypes.classes[b]);
+                return SpellConstants.classes[a].localeCompare(SpellConstants.classes[b]);
             })
         });
     }
@@ -197,9 +202,10 @@ export class SpellEditor extends Component<Props, State> {
 
             if (msg.empty()) {
                 resolve();
+                return;
             }
 
-            Ipc.request<DialogChannel>(Channels.Dialog, {
+            ipc_request<DialogChannel>(Channels.Dialog, {
                 type: 'question',
                 buttons: ['Ok'],
                 title: 'Achtung!',
@@ -217,7 +223,7 @@ export class SpellEditor extends Component<Props, State> {
             };
             if (this.state.mode === 'edit') {
                 const url = `https://dnd.ra6.io/edit/${this.props.to_edit?._id}`;
-                Ipc.request<DialogChannel>(Channels.Dialog, {
+                ipc_request<DialogChannel>(Channels.Dialog, {
                     type: 'question',
                     buttons: ['Ja', 'Nein'],
                     message: 'Sicher, dass du die änderungen speichern willst?',
@@ -235,7 +241,7 @@ export class SpellEditor extends Component<Props, State> {
                 });
             } else {
                 const url = `https://dnd.ra6.io./add`;
-                Ipc.request<DialogChannel>(Channels.Dialog, {
+                ipc_request<DialogChannel>(Channels.Dialog, {
                     type: 'question',
                     buttons: ['Ja', 'Nein'],
                     message: 'Sicher, dass du Speichern willst?',
@@ -295,15 +301,34 @@ export class SpellEditor extends Component<Props, State> {
                             </tr>
                             <tr className='spell-editor__table-hr'/>
                             <tr>
+                                <td>Source</td>
+                                <td>
+                                    <select defaultValue={this.props.to_edit?.source_book} onChange={e => {
+                                        this.setState({
+                                            source_book: e.target.value as SourceBook
+                                        });
+                                    }} name='source_book'>
+                                        {
+                                            SourceBooksSpell.map(source => {
+                                                return (
+                                                    <option key={source} value={source}>{SourceBooks[source as SourceBook]}</option>
+                                                );
+                                            })
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr className='spell-editor__table-hr'/>
+                            <tr>
                                 <td>Klassen</td>
                             </tr>
                             {
-                                Object.keys(SpellTypes.classes).sort((a, b) => {
-                                    return SpellTypes.classes[a as SpellClass].localeCompare(SpellTypes.classes[b as SpellClass]);
+                                Object.keys(SpellConstants.classes).sort((a, b) => {
+                                    return SpellConstants.classes[a as SpellClass].localeCompare(SpellConstants.classes[b as SpellClass]);
                                 }).map(cls => {
                                     return (
                                         <tr key={cls}>
-                                            <td>{SpellTypes.classes[cls as SpellClass]}</td>
+                                            <td>{SpellConstants.classes[cls as SpellClass]}</td>
                                             <td>
                                                 <input checked={this.state.classes.some(c => c === cls as SpellClass)}
                                                        onChange={() => {
@@ -324,9 +349,9 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='school'>
                                         {
-                                            Object.keys(SpellTypes.schools).map(school => {
+                                            Object.keys(SpellConstants.schools).map(school => {
                                                 return (
-                                                    <option key={school} value={school}>{SpellTypes.schools[school as School]}</option>
+                                                    <option key={school} value={school}>{SpellConstants.schools[school as School]}</option>
                                                 );
                                             })
                                         }
@@ -358,10 +383,10 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='time_consumption'>
                                         {
-                                            Object.keys(SpellTypes.time_units).map(unit => {
+                                            Object.keys(SpellConstants.time_units).map(unit => {
                                                 return (
                                                     <option key={unit}
-                                                            value={unit}>{SpellTypes.time_units[unit as TimeUnit].replace('...', this.state.time_consumption_value.toString())}</option>
+                                                            value={unit}>{SpellConstants.time_units[unit as TimeUnit].replace('...', this.state.time_consumption_value.toString())}</option>
                                                 );
                                             })
                                         }
@@ -384,10 +409,10 @@ export class SpellEditor extends Component<Props, State> {
                                         console.log(e.target.value);
                                     }} name='range_units'>
                                         {
-                                            Object.keys(SpellTypes.range_units).map(unit => {
+                                            Object.keys(SpellConstants.range_units).map(unit => {
                                                 return (
                                                     <option key={unit}
-                                                            value={unit}>{SpellTypes.range_units[unit as RangeUnit].replace('...', this.state.range_value.toString())}</option>
+                                                            value={unit}>{SpellConstants.range_units[unit as RangeUnit].replace('...', this.state.range_value.toString())}</option>
                                                 );
                                             })
                                         }
@@ -453,9 +478,10 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='duration'>
                                         {
-                                            Object.keys(SpellTypes.duration_units).map(unit => {
+                                            Object.keys(SpellConstants.duration_units).map(unit => {
                                                 return (
-                                                    <option key={unit} value={unit}>{SpellTypes.duration_units[unit as DurationUnit]}</option>
+                                                    <option key={unit}
+                                                            value={unit}>{SpellConstants.duration_units[unit as DurationUnit]}</option>
                                                 );
                                             })
                                         }
@@ -491,9 +517,10 @@ export class SpellEditor extends Component<Props, State> {
                                         });
                                     }} name='attribute'>
                                         {
-                                            Object.keys(SpellTypes.attributes).map(attribute => {
+                                            Object.keys(SpellConstants.attributes).map(attribute => {
                                                 return (
-                                                    <option key={attribute} value={attribute}>{SpellTypes.attributes[attribute as Attribute]}</option>
+                                                    <option key={attribute}
+                                                            value={attribute}>{SpellConstants.attributes[attribute as Attribute]}</option>
                                                 );
                                             })
                                         }
@@ -528,7 +555,7 @@ export class SpellEditor extends Component<Props, State> {
                         <button onClick={() => this.submit()}
                                 className='spellbottombar__button'>{this.state.mode === 'edit' ? 'Änderungen ' : ''}Speichern
                         </button>
-                        <button onClick={() => Ipc.request<DialogChannel>(Channels.Dialog, {
+                        <button onClick={() => ipc_request<DialogChannel>(Channels.Dialog, {
                             type: 'question',
                             buttons: ['Ja', 'Nein'],
                             message: 'Willst du wirklich Abbrechen? Der Fortschritt geht dabei verloren!',

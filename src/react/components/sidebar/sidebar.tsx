@@ -1,19 +1,22 @@
+import {DisplayInformationChannel} from '@/electron/channels/display_information_channel';
+import {Channels} from '@/shared/channels';
+import {ipc_request} from '@/shared/ipc';
+import {hash} from '@/utils';
+
+import logo from 'asset/resource/icons/dnd.png';
 import {Component} from 'react';
 
 import './sidebar.scss';
-
-import logo from 'asset/resource/icons/dnd.png';
-import {Ipc} from '@/shared/ipc';
-import {Channels} from '@/shared/channels';
-import {DisplayInformationChannel} from '@/electron/channels/display_information_channel';
-import {hash} from '@/utils';
 
 type Props = {
     buttons: string[],
     change_page_cb: (page: string) => void;
 };
 
-export class Sidebar extends Component<Props, any> {
+/**
+ * Schnellwahl
+ */
+class Sidebar extends Component<Props, any> {
     constructor(props: Props) {
         super(props);
 
@@ -21,7 +24,7 @@ export class Sidebar extends Component<Props, any> {
     }
 
     display_info(): void {
-        Ipc.request<DisplayInformationChannel>(Channels.DisplayInformation, {});
+        ipc_request<DisplayInformationChannel>(Channels.DisplayInformation, {}).then();
     }
 
     render(): JSX.Element {
@@ -36,7 +39,8 @@ export class Sidebar extends Component<Props, any> {
                 {
                     this.props.buttons.map(prop => {
                         return (
-                            <div key={hash(prop)} className='sidebar__button sidebar__component' onClick={() => this.props.change_page_cb(prop)}>
+                            <div key={hash(prop)} className='sidebar__button sidebar__component'
+                                 onClick={() => this.props.change_page_cb(prop)}>
                                 <span className='sidebar__button__title'>{`${prop[0].toUpperCase()}${prop.substr(1)}`}</span>
                             </div>
                         );
@@ -50,3 +54,5 @@ export class Sidebar extends Component<Props, any> {
         );
     }
 }
+
+export {Sidebar};

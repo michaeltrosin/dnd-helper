@@ -1,22 +1,30 @@
-export const ThemeColors = [
-    '4B6584',
-    '778CA3',
-    'A5B1C2',
-    'D1D8E0',
-    '8854D0',
-    'A55EEA',
-    '3867D6',
-    '4B7BEC',
-    '2D98DA',
-    'A5AAF2',
-    '0FB9B1',
-    '2BCBBA',
-    '20BF68',
-    '26DE81',
-    'F7B731',
-    'FED330',
-    'FA8231',
-    'FD9644',
-    'EB3B5A',
-    'FC5C65'
-];
+const ThemeColors = {
+    turquoise: '#1abc9c',
+    green_sea: '#16a085',
+    emerald: '#2ecc71',
+    nephritis: '#27ae60',
+    peter_river: '#3498db',
+    belize_hole: '#2980b9',
+    amethyst: '#9b59b6',
+    wisteria: '#8e44ad',
+    wet_asphalt: '#34495e',
+    midnight_blue: '#2c3e50',
+    sun_flower: '#f1c40f',
+    orange: '#f39c12',
+    carrot: '#e67e22',
+    pumpkin: '#d35400',
+    alizarin: '#e74c3c',
+    pomegranate: '#c0392b',
+    clouds: '#ecf0f1',
+    silver: '#bdc3c7',
+    concrete: '#95a5a6',
+    asbestos: '#7f8c8d',
+    
+    reines_pink: '#FF00FF',
+    discord: '#2c2f33',
+    t_mobile: '#ea0a8e',
+};
+
+type Theme = keyof (typeof ThemeColors);
+
+export {Theme, ThemeColors};

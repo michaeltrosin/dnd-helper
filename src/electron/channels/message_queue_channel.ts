@@ -1,5 +1,5 @@
-import {AbstractIpcChannel} from '@/shared/ipc';
 import {Channels} from '@/shared/channels';
+import {AbstractIpcChannel} from '@/shared/ipc';
 import {IMessage, IMessageMessageType} from '@/shared/message_queue';
 
 type TArgs = {
@@ -11,7 +11,7 @@ type TArgs = {
 };
 type TReturn = IMessage[];
 
-export class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
+class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
     messages: Map<number, {
         message: IMessage;
         length: number;
@@ -68,3 +68,5 @@ export class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
         }
     }
 }
+
+export {MessageQueueChannel};

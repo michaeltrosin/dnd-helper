@@ -1,11 +1,11 @@
-export type SpellClass = keyof (typeof SpellTypes.classes);
-export type School = keyof (typeof SpellTypes.schools);
-export type TimeUnit = keyof (typeof SpellTypes.time_units);
-export type RangeUnit = keyof (typeof SpellTypes.range_units);
-export type DurationUnit = keyof (typeof SpellTypes.duration_units);
-export type Attribute = keyof (typeof SpellTypes.attributes);
+export type SpellClass = keyof (typeof SpellConstants.classes);
+export type School = keyof (typeof SpellConstants.schools);
+export type TimeUnit = keyof (typeof SpellConstants.time_units);
+export type RangeUnit = keyof (typeof SpellConstants.range_units);
+export type DurationUnit = keyof (typeof SpellConstants.duration_units);
+export type Attribute = keyof (typeof SpellConstants.attributes);
 
-export const SpellTypes = {
+export const SpellConstants = {
     classes: {
         artificer: 'Erfinder',
         bard: 'Barde',
@@ -36,9 +36,12 @@ export const SpellTypes = {
         up_to_hour: 'Bis zu ... Stunde/-n',
         end_of_round: 'Ende der Runde',
         round: 'Runde/-n',
+        reaction: 'Reaktion',
     },
     range_units: {
         self: 'Selbst',
+        sight: 'Sicht',
+        line: 'Linie',
 
         self_cone_meter: 'Selbst (...m großer Kegel)',
         self_radius_meter: 'Selbst (...m großer Radius)',
@@ -65,7 +68,10 @@ export const SpellTypes = {
         instantaneous: 'Unmittelbar',
         minute: 'Minute/-n',
         hour: 'Stunde/-n',
+        up_to_minute: 'Bis zu ... Minute/-n',
+        up_to_hour: 'Bis zu ... Stunde/-n',
         end_of_turn: 'Ende von deinem Zug',
         end_of_target_turn: 'Ende vom Zug des Ziels',
+        round: 'Runde-/n',
     }
 };

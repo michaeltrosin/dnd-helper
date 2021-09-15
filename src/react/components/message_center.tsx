@@ -1,17 +1,17 @@
-import {Component} from 'react';
-
-import './message_center.scss';
-import {Ipc} from '@/shared/ipc';
 import {MessageQueueChannel} from '@/electron/channels/message_queue_channel';
 import {Channels} from '@/shared/channels';
+import {ipc_request} from '@/shared/ipc';
 import {IMessage} from '@/shared/message_queue';
+import {Component} from 'react';
+
+import '../styles/message_center.scss';
 
 type State = {
     messages: Array<IMessage>;
 };
 type Props = {};
 
-export class MessageCenter extends Component<Props, State> {
+class MessageCenter extends Component<Props, State> {
     timer_loop: NodeJS.Timeout | undefined;
 
     constructor(props: Props) {
@@ -22,7 +22,7 @@ export class MessageCenter extends Component<Props, State> {
         };
 
         this.timer_loop = setInterval(() => {
-            Ipc.request<MessageQueueChannel>(Channels.MessageQueue, {
+            ipc_request<MessageQueueChannel>(Channels.MessageQueue, {
                 method: 'get'
             })
                 .then((result: IMessage[]) => {
@@ -63,3 +63,5 @@ export class MessageCenter extends Component<Props, State> {
         );
     }
 }
+
+export {MessageCenter};

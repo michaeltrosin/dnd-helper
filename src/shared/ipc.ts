@@ -5,7 +5,7 @@ enum ResultType {
     Rejected
 }
 
-export abstract class AbstractIpcChannel<TArgs, TReturn = TArgs> {
+abstract class AbstractIpcChannel<TArgs, TReturn = TArgs> {
     abstract get name(): string;
 
     static response_name(name: string): string {
@@ -17,9 +17,9 @@ export abstract class AbstractIpcChannel<TArgs, TReturn = TArgs> {
             payload,
             result: ResultType.Resolved
         });
-    };
+    }
 
-    readonly reject = (event: IpcMainEvent, error: Error) => {
+    readonly reject = (event: IpcMainEvent, error?: Error | string) => {
         event.sender.send(AbstractIpcChannel.response_name(this.name), {
             payload: error,
             result: ResultType.Rejected
@@ -49,4 +49,5 @@ class IpcRequest {
     }
 }
 
-export const Ipc = new IpcRequest();
+export const ipc_request = new IpcRequest().request;
+export {AbstractIpcChannel};
