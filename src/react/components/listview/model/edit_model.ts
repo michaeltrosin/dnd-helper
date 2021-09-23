@@ -36,6 +36,10 @@ abstract class EditModel<Type> {
         return this.request_cancel_event.expose();
     }
 
+    validate_and_save(object: Type, selected_object: Type | undefined): Promise<void> {
+        return Promise.resolve();
+    }
+
     abstract keys(): Edit<Type>[];
 
     abstract binding_key_value(binding: keyof (Type), key: string): string;

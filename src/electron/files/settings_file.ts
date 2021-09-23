@@ -2,18 +2,20 @@ import {FileStore} from '@/electron/files/file_store';
 import {Theme} from '@/shared/colors';
 import isDev from 'electron-is-dev';
 
+type SettingsProfile = {
+    [name: string]: any;
+    name: string;
+    theme: Theme;
+    edit: boolean;
+};
+
 type SettingsValues = {
     width: number;
     height: number;
     maximized: boolean;
 
-    site: SiteSettings;
-};
-
-type SiteSettings = {
-    [name: string]: any;
-    theme: Theme;
-    edit: boolean;
+    selected: string;
+    profiles: SettingsProfile[];
 };
 
 class Settings extends FileStore<SettingsValues> {
@@ -23,12 +25,32 @@ class Settings extends FileStore<SettingsValues> {
             height: 720,
             maximized: false,
 
-            site: {
+            selected: 'Default',
+
+            profiles: [{
+                name: 'Default',
                 edit: isDev,
-                theme: 'wet_asphalt'
+                theme: 'wet_asphalt',
+            }],
+        });
+    }
+
+    set_profile(profile: SettingsProfile): void {
+        const existing = this.data.profiles.findIndex(a => {
+            return a.name === profile.name;
+        });
+
+        if (existing === -1) {
+            return;
+        }
+
+        this.data.profiles = this.data.profiles.map((element, index) => {
+            if (index === existing) {
+                return profile;
             }
+            return element;
         });
     }
 }
 
-export {Settings, SettingsValues, SiteSettings};
+export {Settings, SettingsValues, SettingsProfile};

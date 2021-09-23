@@ -6,7 +6,7 @@ class FileStore<TData> {
     private readonly path: string;
 
     constructor(private name: string,
-                private data: TData) {
+                protected data: TData) {
         this.path = Path.join(Filesystem.StoreFolder, `${this.name}.store`);
         this.load();
     }

@@ -4,7 +4,6 @@ import {ListHeader} from '@/react/components/listview/header/list_header';
 import {ListItem} from '@/react/components/listview/item/list_item';
 import {EditType} from '@/react/components/listview/model/edit_model';
 import {ItemId, List} from '@/react/components/listview/model/listview_model';
-import {ISpell} from '@/react/components/spell/types/spell';
 import {Channels} from '@/shared/channels';
 import {ipc_request} from '@/shared/ipc';
 import {hash} from '@/utils';
@@ -17,6 +16,7 @@ import './list_view.scss';
 type Props = {
     model: List<any>;
 };
+
 type State = {
     selected_item: ItemId;
     filter_open: boolean;
@@ -24,8 +24,6 @@ type State = {
     new_object: boolean;
     edit_object: any;
 };
-
-// FIXME: Name not updating
 
 class ListView extends Component<Props, State> {
     constructor(props: Props) {
@@ -39,7 +37,11 @@ class ListView extends Component<Props, State> {
             edit_object: {},
         };
 
-        this.props.model.request_change.on(() => {
+        this.add_events();
+    }
+
+    private add_events(): void {
+        this.props.model.request_change.clear().on(() => {
             this.setState({
                 selected_item: -1,
             });
@@ -47,8 +49,8 @@ class ListView extends Component<Props, State> {
             this.forceUpdate();
             console.info('Updating');
         });
-
-        this.props.model.item_clicked.on((item) => {
+        this.props.model.item_clicked.clear().on((item: ItemId | undefined) => {
+            console.log(item);
             if (item !== undefined) {
                 if (!this.state.edit_mode) {
                     this.setState({
@@ -57,19 +59,20 @@ class ListView extends Component<Props, State> {
                 }
             }
         });
-
-        this.props.model.trigger_filter.on(() => {
+        this.props.model.trigger_filter.clear().on(() => {
             this.setState({
                 filter_open: !this.state.filter_open,
             });
             console.log('filter', this.state.filter_open);
         });
-
-        this.props.model.summary_model.request_edit.on(() => {
+        this.props.model.summary_model.request_edit.clear().on(() => {
             if (this.state.selected_item !== -1) {
+                const data = this.props.model.edit_model?.new(this.props.model.get_item(this.state.selected_item)?.data) ?? {};
+                console.log(data);
+
                 this.setState({
                     edit_mode: true,
-                    edit_object: this.props.model.edit_model?.new(this.props.model.get_item(this.state.selected_item)?.data) ?? {},
+                    edit_object: data,
                 });
             } else {
                 ipc_request<DialogChannel>(Channels.Dialog, {
@@ -80,7 +83,7 @@ class ListView extends Component<Props, State> {
                 }).then();
             }
         });
-        this.props.model.summary_model.request_new.on(() => {
+        this.props.model.summary_model.request_new.clear().on(() => {
             console.log('New');
             this.setState({
                 edit_mode: true,
@@ -89,66 +92,56 @@ class ListView extends Component<Props, State> {
                 edit_object: this.props.model.edit_model?.new() ?? {},
             });
         });
-        this.props.model.edit_model?.request_cancel.on(() => {
+
+        this.props.model.edit_model?.request_cancel.clear().on(() => {
             this.setState({
                 edit_mode: false,
                 new_object: false,
             });
         });
-        this.props.model.edit_model?.request_save.on(() => {
-            this.props.model.edit_model?.check_input(this.state.edit_object).then(() => {
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: this.props.model.edit_model?.to_html_body(this.state.edit_object),
-                    };
-
-                    if (this.state.new_object) {
-                        // TODO: make modular
-                        const url = `https://dnd.ra6.io./add`;
-                        ipc_request<DialogChannel>(Channels.Dialog, {
-                            type: 'question',
-                            buttons: ['Ja', 'Nein'],
-                            message: 'Sicher, dass du Speichern willst?',
-                            title: 'Speichern',
-                        }).then(result => {
-                            if (result.selected_index === 0) {
-                                fetch(url, requestOptions)
-                                    .then(res => res.json())
-                                    .then(res => {
-                                        this.setState({
-                                            edit_mode: false,
-                                            new_object: false,
-                                        });
-                                    })
-                                    .catch(err => console.error(err));
-                            }
-                        });
-                    } else {
-                        // TODO: make modular
-                        const url = `https://dnd.ra6.io/edit/${this.props.model.get_item(this.state.selected_item)?.data._id}`;
-                        ipc_request<DialogChannel>(Channels.Dialog, {
-                            type: 'question',
-                            buttons: ['Ja', 'Nein'],
-                            message: 'Sicher, dass du die Änderungen speichern willst?',
-                            title: 'Änderungen Speichern',
-                        }).then(result => {
-                            if (result.selected_index === 0) {
-                                fetch(url, requestOptions)
-                                    .then(res => res.json())
-                                    .then(res => {
-                                        this.setState({
-                                            edit_mode: false,
-                                            new_object: false,
-                                        });
-                                    })
-                                    .catch(err => console.error(err));
-                            }
-                        });
-                    }
-                },
-            );
+        this.props.model.edit_model?.request_save.clear().on(() => {
+            console.log(this.props.model.get_item(this.state.selected_item));
+            this.props.model.edit_model?.validate_and_save(this.state.edit_object, this.state.new_object ? undefined : this.props.model.get_item(this.state.selected_item)?.data)
+                .then(() => {
+                    this.setState({
+                        edit_mode: false,
+                        new_object: false,
+                    });
+                }).catch(err => console.error(err));
         });
+    }
+
+    public request_switch(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (this.state.edit_mode) {
+                ipc_request<DialogChannel>(Channels.Dialog, {
+                    type: 'question',
+                    buttons: ['Ok'],
+                    title: 'Info',
+                    message: 'Bitte zuerst speichern!',
+                }).then();
+                reject();
+                return;
+            }
+            this.setState({
+                selected_item: -1,
+                filter_open: false,
+                edit_mode: false,
+                new_object: false,
+                edit_object: {},
+            }, () => {
+                resolve();
+            });
+        });
+    }
+
+    componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+        if (prevProps.model !== this.props.model) {
+            this.add_events();
+        }
+    }
+
+    reset(): void {
     }
 
     private set(key: string, value: any): void {

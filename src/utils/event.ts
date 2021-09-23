@@ -1,18 +1,25 @@
 interface ILiteEvent<T> {
-    on(handler: (data?: T) => void): void;
-
-    off(handler: (data?: T) => void): void;
+    on(handler: (data?: T) => void): ILiteEvent<T>;
+    clear(): ILiteEvent<T>;
+    off(handler: (data?: T) => void): ILiteEvent<T>;
 }
 
 class LiteEvent<T> implements ILiteEvent<T> {
     private handlers: ((data?: T) => void)[] = [];
 
-    public on(handler: (data?: T) => void): void {
+    public on(handler: (data?: T) => void): ILiteEvent<T> {
         this.handlers.push(handler);
+        return this;
     }
 
-    public off(handler: (data?: T) => void): void {
+    public clear(): ILiteEvent<T> {
+        this.handlers = [];
+        return this;
+    }
+
+    public off(handler: (data?: T) => void): ILiteEvent<T> {
         this.handlers = this.handlers.filter(h => h !== handler);
+        return this;
     }
 
     public invoke(data?: T): void {

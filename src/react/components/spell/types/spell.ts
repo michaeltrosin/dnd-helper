@@ -96,8 +96,8 @@ export interface ISpell {
 
 export const convert_spell = (spell: ISpell): ISpell => {
     const name = {
-        german: spell.name.german.text_if_empty(spell.name_german ?? ''),
-        english: spell.name.english.text_if_empty(spell.name_english ?? ''),
+        german: (spell.name_german ?? '').text_if_empty(spell.name.german),
+        english: (spell.name_english ?? '').text_if_empty(spell.name.english ?? ''),
     };
 
     const time_consumption = {

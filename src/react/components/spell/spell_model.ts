@@ -226,6 +226,55 @@ class SpellEditModel extends EditModel<ISpell> {
         ];
     }
 
+    validate_and_save(object: ISpell, selected_object: ISpell | undefined): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.check_input(object).then(() => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: this.to_html_body(object),
+                };
+
+                if (selected_object === undefined) {
+                    const url = `https://dnd.ra6.io./add`;
+                    ipc_request<DialogChannel>(Channels.Dialog, {
+                        type: 'question',
+                        buttons: ['Ja', 'Nein'],
+                        message: 'Sicher, dass du Speichern willst?',
+                        title: 'Speichern',
+                    }).then(result => {
+                        if (result.selected_index === 0) {
+                            fetch(url, requestOptions)
+                                .then(res => res.json())
+                                .then(() => {
+                                    resolve();
+                                })
+                                .catch(err => console.error(err));
+                        }
+                    });
+                } else {
+                    const url = `https://dnd.ra6.io/edit/${selected_object._id}`;
+                    console.log(object);
+                    ipc_request<DialogChannel>(Channels.Dialog, {
+                        type: 'question',
+                        buttons: ['Ja', 'Nein'],
+                        message: 'Sicher, dass du die Änderungen speichern willst?',
+                        title: 'Änderungen Speichern',
+                    }).then(result => {
+                        if (result.selected_index === 0) {
+                            fetch(url, requestOptions)
+                                .then(res => res.json())
+                                .then(() => {
+                                    resolve();
+                                })
+                                .catch(err => console.error(err));
+                        }
+                    });
+                }
+            });
+        });
+    }
+
     new(old?: ISpell): ISpell {
         if (old) {
             // console.log(old);
@@ -281,7 +330,6 @@ class SpellEditModel extends EditModel<ISpell> {
     }
 
     to_html_body(item: ISpell): string {
-        console.log(convert_spell(item));
         return JSON.stringify(convert_spell(item));
     }
 
