@@ -1,6 +1,7 @@
 import {BottombarComponent} from '@/react/components/bottombar/bottombar';
 import {EditModel} from '@/react/components/listview/model/edit_model';
 import {SummaryModel} from '@/react/components/listview/model/preview_model';
+import {ISpell} from '@/react/components/spell/types/spell';
 import {ILiteEvent, LiteEvent} from '@/utils/event';
 
 class ItemContainer<ItemType> {
@@ -17,6 +18,11 @@ type ListPreview<Binding> = {
 };
 
 type ItemId = number;
+type FilterType = {
+    binding?: any;
+    bounds: any[];
+    data: any[];
+};
 
 // TODO: add sorting
 // TODO: add adding/editing
@@ -42,9 +48,15 @@ abstract class List<ItemType> {
     private items: Map<ItemId, ItemContainer<ItemType>> = new Map<ItemId, ItemContainer<ItemType>>();
     private id = 0;
 
+    protected get Items(): Map<ItemId, ItemContainer<ItemType>> {
+        return this.items;
+    }
+
     abstract summary_model: SummaryModel<ItemType>;
     abstract list_preview: ListPreview<ItemType>[];
     edit_model?: EditModel<ItemType>;
+
+    filter_data?: Map<keyof (ItemType), FilterType>;
 
     public get_item(id: ItemId): ItemContainer<ItemType> | undefined {
         if (id === -1) {
@@ -85,7 +97,7 @@ abstract class List<ItemType> {
     }
 
     protected sorted_filtered_items(): ItemId[] {
-        return Array.from(this.items.keys());
+        return Array.from(this.Items.keys());
     }
 
     abstract text_from_binding(item: ItemId, binding: keyof (ItemType)): string;
@@ -93,4 +105,4 @@ abstract class List<ItemType> {
     abstract bottombar_data(): BottombarComponent[];
 }
 
-export {List, ListPreview, ItemId};
+export {List, ListPreview, ItemId, FilterType};

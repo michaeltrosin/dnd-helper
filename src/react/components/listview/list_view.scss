@@ -17,6 +17,22 @@
     }
   }
 
+  .filter {
+    &__wrapper {
+      position: absolute;
+      bottom: 41px;
+      right: 17px;
+
+      background: rgba(0, 0, 0, 0.2);
+      width: auto;
+      height: auto;
+
+      span {
+        display: inline;
+      }
+    }
+  }
+
   &__table {
     display: flex;
     flex-flow: column;

@@ -185,7 +185,7 @@ class SettingsModel extends List<SettingsModelType> {
             Bottombar.button('Profile laden', () => {
                 console.log('Loading');
             }),
-            Bottombar.button('Program neu laden', () => {
+            Bottombar.button('Anwenden', () => {
                 this.refresh();
                 window.location.reload(false);
             }),

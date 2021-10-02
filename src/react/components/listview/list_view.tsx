@@ -174,6 +174,20 @@ class ListView extends Component<Props, State> {
                                 }
                                 </tbody>
                             </table>
+                            {
+                                this.state.filter_open &&
+                                <div className={'filter__wrapper'}>
+                                  <table>
+                                    <thead>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        this.construct_filter()
+                                    }
+                                    </tbody>
+                                  </table>
+                                </div>
+                            }
                         </div>
                         {
                             this.props.model.bottombar_data().length > 0 &&
@@ -337,6 +351,64 @@ class ListView extends Component<Props, State> {
                 </SplitPane>
             </div>
         );
+    }
+
+    private construct_filter(): JSX.Element[] {
+        const filter = this.props.model.filter_data;
+        if (filter === undefined) {
+            return [];
+        }
+        const keys = Array.from(filter.keys());
+        const max_length = (): number => {
+            let len = 0;
+            for (const key of keys) {
+                const item = filter.get(key);
+                if (!item) {
+                    continue;
+                }
+                len = Math.max(len, item.bounds.length);
+            }
+            return len;
+        };
+
+        const result: JSX.Element[] = [];
+
+        for (let i = 0; i < max_length(); i++) {
+            result.push(
+                <tr key={i}>
+                    {
+                        keys.map(key => {
+                            const item = filter.get(key);
+                            if (item === undefined) {
+                                return undefined;
+                            }
+                            const bound = item.bounds[i];
+                            if (bound === undefined) {
+                                return undefined;
+                            }
+                            const text = item.binding === undefined ? bound : item.binding[bound];
+
+                            return <td key={hash(bound)}>
+                                <input type='checkbox'
+                                       defaultChecked={item.data.includes(bound)}
+                                       onChange={event => {
+                                           const checked = event.target.checked;
+                                           console.log(key);
+
+                                           const index = item.data.indexOf(bound, 0);
+                                           if (!checked && index > -1) {
+                                               item.data.splice(index, 1);
+                                           } else if (checked) {
+                                               item.data.push(bound);
+                                           }
+                                       }}/><span>{text}</span></td>;
+                        })
+                    }
+                </tr>,
+            );
+        }
+
+        return result;
     }
 }
 

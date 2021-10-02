@@ -1,7 +1,7 @@
 import {DialogChannel} from '@/electron/channels/dialog_channel';
 import {Bottombar, BottombarComponent} from '@/react/components/bottombar/bottombar';
 import {Edit, EditModel, EditType} from '@/react/components/listview/model/edit_model';
-import {ItemId, List, ListPreview} from '@/react/components/listview/model/listview_model';
+import {FilterType, ItemId, List, ListPreview} from '@/react/components/listview/model/listview_model';
 import {SummaryModel} from '@/react/components/listview/model/preview_model';
 import {convert_spell, ISpell} from '@/react/components/spell/types/spell';
 import {Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellConstants, TimeUnit} from '@/react/components/spell/types/spell_types';
@@ -500,8 +500,22 @@ class SpellEditModel extends EditModel<ISpell> {
     }
 }
 
+type Sorting = {
+    binding: keyof (ISpell);
+    dir: 'asc' | 'desc';
+};
+
 class SpellModel extends List<ISpell> {
     private title_string = '';
+
+    private sortings: Map<string, Sorting> = new Map<string, Sorting>([
+        ['level_asc', {binding: 'level', dir: 'asc'}],
+        ['level_desc', {binding: 'level', dir: 'desc'}],
+        ['name_asc', {binding: 'name_german', dir: 'asc'}],
+        ['name_desc', {binding: 'name_german', dir: 'desc'}],
+    ]);
+
+    private sorting: Sorting | undefined = this.sortings.get('level_asc');
 
     list_preview: ListPreview<ISpell>[] = [
         {display: 'Level', binding: 'level', sortable: true},
@@ -512,6 +526,23 @@ class SpellModel extends List<ISpell> {
 
     summary_model: SummaryModel<ISpell> = new SpellSummaryModel();
     edit_model = new SpellEditModel();
+
+    filter_data: Map<keyof (ISpell), FilterType> = new Map<keyof (ISpell), FilterType>([
+        ['level', {
+            bounds: Array.from(Array(10).keys()),
+            data: Array.from(Array(10).keys()),
+        }],
+        ['classes', {
+            binding: SpellConstants.classes,
+            bounds: Array.from(Object.keys(SpellConstants.classes)),
+            data: Array.from(Object.keys(SpellConstants.classes)),
+        }],
+        ['source_book', {
+            binding: SourceBooks,
+            bounds: Array.from(SourceBooksSpell),
+            data: Array.from(SourceBooksSpell),
+        }],
+    ]);
 
     text_from_binding(itemId: ItemId, binding: keyof ISpell): string {
         const item = this.get_item(itemId);
@@ -547,12 +578,90 @@ class SpellModel extends List<ISpell> {
     }
 
     header_item_clicked(binding: keyof ISpell): void {
-        console.log(binding.toString());
+        const cur_sorting = this.sorting;
+
+        if (binding === 'level') {
+            // sort by level
+            if (cur_sorting === undefined || cur_sorting.binding !== 'level') {
+                this.sorting = this.sortings.get('level_asc');
+            } else {
+                if (cur_sorting.dir === 'asc') {
+                    this.sorting = this.sortings.get('level_desc');
+                } else {
+                    this.sorting = this.sortings.get('level_asc');
+                }
+            }
+
+        } else if (binding === 'name_german') {
+            // sort by name
+            if (cur_sorting === undefined || cur_sorting.binding !== 'name_german') {
+                this.sorting = this.sortings.get('name_asc');
+            } else {
+                if (cur_sorting.dir === 'asc') {
+                    this.sorting = this.sortings.get('name_desc');
+                } else {
+                    this.sorting = this.sortings.get('name_asc');
+                }
+            }
+        }
+
+        this.request_change_event.invoke();
     }
 
     protected sorted_filtered_items(): ItemId[] {
-        // this.items.filter()
-        return super.sorted_filtered_items();
+        if (!this.sorting) {
+            return Array.from(this.Items.keys());
+        }
+
+        // 1. Filter;
+        const filtered: ItemId[] = Array.from(this.Items.keys()).filter(id => {
+            const item = this.get_item(id)?.data;
+            if (!item) {
+                return false;
+            }
+
+            let includes = true;
+
+            for (const [binding, {data}] of Array.from(this.filter_data.entries())) {
+                if (Array.isArray(item[binding])) {
+                    includes = includes && data.some(t => {
+                        return (item[binding] as any[]).includes(t);
+                    });
+                } else {
+                    includes = includes && data.includes(item[binding]);
+                }
+            }
+
+            return includes;
+        });
+
+        // 2. Sort;
+        const sorted: ItemId[] = filtered.sort((a, b) => {
+            const item_a = this.get_item(a)?.data;
+            const item_b = this.get_item(b)?.data;
+
+            if (item_a === undefined || item_b === undefined) {
+                return 0;
+            }
+
+            if (this.sorting?.binding === 'level') {
+                if (this.sorting.dir === 'asc') {
+                    return item_a.level - item_b.level;
+                } else {
+                    return item_b.level - item_a.level;
+                }
+            } else if (this.sorting?.binding === 'name_german') {
+                if (this.sorting.dir === 'asc') {
+                    return item_a.name_german?.localeCompare(item_b.name_german ?? '') ?? 0;
+                } else {
+                    return item_b.name_german?.localeCompare(item_a.name_german ?? '') ?? 0;
+                }
+            }
+
+            return 0;
+        });
+
+        return sorted;
     }
 
     bottombar_data(): BottombarComponent[] {
