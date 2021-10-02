@@ -396,7 +396,7 @@ class ListView extends Component<Props, State> {
                             if (bound === undefined) {
                                 if (item.bounds.length === i) {
                                     return <td key={hash('alle')}>
-                                        <button onClick={() => {
+                                        <button className={'filter__button'} onClick={() => {
                                             item.data = Array.from(item.bounds);
                                             this.refresh_filter();
                                         }}>Alle
@@ -404,7 +404,7 @@ class ListView extends Component<Props, State> {
                                     </td>;
                                 } else if (item.bounds.length === i - 1) {
                                     return <td key={hash('keine')}>
-                                        <button onClick={() => {
+                                        <button className={'filter__button'} onClick={() => {
                                             item.data = [];
                                             this.refresh_filter();
                                         }}>Keine
