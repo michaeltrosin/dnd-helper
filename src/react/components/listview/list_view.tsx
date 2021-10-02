@@ -23,6 +23,7 @@ type State = {
     edit_mode: boolean;
     new_object: boolean;
     edit_object: any;
+    refresh_filter: boolean;
 };
 
 class ListView extends Component<Props, State> {
@@ -35,6 +36,7 @@ class ListView extends Component<Props, State> {
             edit_mode: false,
             new_object: false,
             edit_object: {},
+            refresh_filter: false,
         };
 
         this.add_events();
@@ -139,6 +141,12 @@ class ListView extends Component<Props, State> {
         if (prevProps.model !== this.props.model) {
             this.add_events();
         }
+        if (this.state.refresh_filter) {
+            this.setState({
+                refresh_filter: false,
+                filter_open: true,
+            });
+        }
     }
 
     reset(): void {
@@ -177,15 +185,17 @@ class ListView extends Component<Props, State> {
                             {
                                 this.state.filter_open &&
                                 <div className={'filter__wrapper'}>
-                                  <table>
-                                    <thead>
-                                    </thead>
-                                    <tbody>
-                                    {
-                                        this.construct_filter()
-                                    }
-                                    </tbody>
-                                  </table>
+                                  <div className='filter__background'>
+                                    <table>
+                                      <thead>
+                                      </thead>
+                                      <tbody>
+                                      {
+                                          this.construct_filter()
+                                      }
+                                      </tbody>
+                                    </table>
+                                  </div>
                                 </div>
                             }
                         </div>
@@ -373,7 +383,7 @@ class ListView extends Component<Props, State> {
 
         const result: JSX.Element[] = [];
 
-        for (let i = 0; i < max_length(); i++) {
+        for (let i = 0; i < max_length() + 2; i++) {
             result.push(
                 <tr key={i}>
                     {
@@ -384,6 +394,23 @@ class ListView extends Component<Props, State> {
                             }
                             const bound = item.bounds[i];
                             if (bound === undefined) {
+                                if (item.bounds.length === i) {
+                                    return <td key={hash('alle')}>
+                                        <button onClick={() => {
+                                            item.data = Array.from(item.bounds);
+                                            this.refresh_filter();
+                                        }}>Alle
+                                        </button>
+                                    </td>;
+                                } else if (item.bounds.length === i - 1) {
+                                    return <td key={hash('keine')}>
+                                        <button onClick={() => {
+                                            item.data = [];
+                                            this.refresh_filter();
+                                        }}>Keine
+                                        </button>
+                                    </td>;
+                                }
                                 return undefined;
                             }
                             const text = item.binding === undefined ? bound : item.binding[bound];
@@ -393,7 +420,6 @@ class ListView extends Component<Props, State> {
                                        defaultChecked={item.data.includes(bound)}
                                        onChange={event => {
                                            const checked = event.target.checked;
-                                           console.log(key);
 
                                            const index = item.data.indexOf(bound, 0);
                                            if (!checked && index > -1) {
@@ -401,6 +427,7 @@ class ListView extends Component<Props, State> {
                                            } else if (checked) {
                                                item.data.push(bound);
                                            }
+                                           this.refresh_filter();
                                        }}/><span>{text}</span></td>;
                         })
                     }
@@ -409,6 +436,13 @@ class ListView extends Component<Props, State> {
         }
 
         return result;
+    }
+
+    private refresh_filter(): void {
+        this.setState({
+            filter_open: false,
+            refresh_filter: true,
+        });
     }
 }
 

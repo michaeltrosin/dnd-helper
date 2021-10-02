@@ -1,4 +1,5 @@
 @use 'src/react/styles/flex';
+@use 'src/defaults' as defaults;
 
 .listview {
   margin-left: 1px;
@@ -18,12 +19,20 @@
   }
 
   .filter {
-    &__wrapper {
-      position: absolute;
-      bottom: 41px;
-      right: 17px;
-
+    &__background {
       background: rgba(0, 0, 0, 0.2);
+    }
+
+    &__wrapper {
+      background: defaults.$background-color;
+
+      border-left: 1px solid defaults.$background-color;
+      border-top: 1px solid defaults.$background-color;
+
+      position: absolute;
+
+      bottom: 40px;
+      right: 17px;
       width: auto;
       height: auto;
 
