@@ -2,7 +2,7 @@ import {SettingsChannel, SettingsRequestMethod} from '@/electron/channels/settin
 import {SettingsProfile} from '@/electron/files/settings_file';
 import {Bottombar, BottombarComponent} from '@/react/components/bottombar/bottombar';
 import {Edit, EditModel, EditType} from '@/react/components/listview/model/edit_model';
-import {ItemId, List, ListPreview} from '@/react/components/listview/model/listview_model';
+import {ItemId, ListModel, ListPreview} from '@/react/components/listview/model/listview_model';
 import {SummaryModel} from '@/react/components/listview/model/preview_model';
 import {Channels} from '@/shared/channels';
 import {Theme, ThemeColors} from '@/shared/colors';
@@ -136,7 +136,7 @@ class SettingsSummaryModel extends SummaryModel<SettingsModelType> {
     }
 }
 
-class SettingsModel extends List<SettingsModelType> {
+class SettingsModel extends ListModel<SettingsModelType> {
     list_preview: ListPreview<SettingsModelType>[] = [
         {display: 'Profil', binding: 'name'},
     ];

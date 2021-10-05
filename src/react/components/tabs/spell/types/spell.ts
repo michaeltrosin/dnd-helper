@@ -44,6 +44,7 @@ export interface ISpell {
 
     time_consumption_value?: number;
     time_consumption_format?: string;
+    time_consumption_extra?: string;
 
     // Reichweite
     // 'self' | 'touch' | 'view' | 'meters' | 'foot' | 'feet'
@@ -157,6 +158,7 @@ export const convert_spell = (spell: ISpell): ISpell => {
         time_consumption,
         time_consumption_value: time_consumption.value,
         time_consumption_format: time_consumption.format,
+        time_consumption_extra: spell.time_consumption_extra,
 
         range,
         range_value: range.value,

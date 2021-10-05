@@ -1,9 +1,10 @@
 import {Background} from '@/react/components/background/background';
 import {ListView} from '@/react/components/listview/list_view';
-import {List} from '@/react/components/listview/model/listview_model';
-import {SettingsModel} from '@/react/components/settings/settings_model';
+import {ListModel} from '@/react/components/listview/model/listview_model';
+import {Model} from '@/react/components/model';
 import {Sidebar} from '@/react/components/sidebar/sidebar';
-import {SpellModel} from '@/react/components/spell/spell_model';
+import {SettingsModel} from '@/react/components/tabs/settings/settings_model';
+import {SpellModel} from '@/react/components/tabs/spell/spell_model';
 import {CustomStyles} from '@/react/custom_styles';
 import {ThemeColors} from '@/shared/colors';
 
@@ -14,7 +15,7 @@ import './app.scss';
 
 type State = {
     style_color: string;
-    model: List<any>;
+    model: Model<any>;
 };
 
 type Props = {};
@@ -62,7 +63,10 @@ class App extends Component<Props, State> {
                             }
                         });
                     }} buttons={['spells', 'settings']}/>
-                    <ListView ref={this.listview} model={this.state.model}/>
+                    {
+                        (this.state.model instanceof ListModel) &&
+                        <ListView ref={this.listview} model={this.state.model}/>
+                    }
                 </div>
             </>
         )

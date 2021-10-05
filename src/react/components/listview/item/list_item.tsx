@@ -1,9 +1,9 @@
-import {ItemId, List} from '@/react/components/listview/model/listview_model';
+import {ItemId, ListModel} from '@/react/components/listview/model/listview_model';
 import { hash } from '@/utils';
 import {Component} from 'react';
 
 type Props = {
-    model: List<any>;
+    model: ListModel<any>;
     item: ItemId;
 };
 type State = {};

@@ -1,7 +1,7 @@
 import {BottombarComponent} from '@/react/components/bottombar/bottombar';
 import {EditModel} from '@/react/components/listview/model/edit_model';
 import {SummaryModel} from '@/react/components/listview/model/preview_model';
-import {ISpell} from '@/react/components/spell/types/spell';
+import {Model} from '@/react/components/model';
 import {ILiteEvent, LiteEvent} from '@/utils/event';
 
 class ItemContainer<ItemType> {
@@ -24,11 +24,7 @@ type FilterType = {
     data: any[];
 };
 
-// TODO: add sorting
-// TODO: add adding/editing
-
-abstract class List<ItemType> {
-
+abstract class ListModel<ItemType> extends Model<ItemType>{
     protected trigger_filter_event: LiteEvent<void> = new LiteEvent();
     protected request_change_event: LiteEvent<void> = new LiteEvent();
     protected item_clicked_event: LiteEvent<ItemId> = new LiteEvent();
@@ -105,4 +101,4 @@ abstract class List<ItemType> {
     abstract bottombar_data(): BottombarComponent[];
 }
 
-export {List, ListPreview, ItemId, FilterType};
+export {ListModel, ListPreview, ItemId, FilterType};

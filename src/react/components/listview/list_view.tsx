@@ -2,8 +2,8 @@ import {DialogChannel} from '@/electron/channels/dialog_channel';
 import {Bottombar} from '@/react/components/bottombar/bottombar';
 import {ListHeader} from '@/react/components/listview/header/list_header';
 import {ListItem} from '@/react/components/listview/item/list_item';
-import {EditType} from '@/react/components/listview/model/edit_model';
-import {ItemId, List} from '@/react/components/listview/model/listview_model';
+import {Edit, EditType, Label} from '@/react/components/listview/model/edit_model';
+import {ItemId, ListModel} from '@/react/components/listview/model/listview_model';
 import {Channels} from '@/shared/channels';
 import {ipc_request} from '@/shared/ipc';
 import {hash} from '@/utils';
@@ -14,7 +14,7 @@ import SplitPane from 'react-split-pane';
 import './list_view.scss';
 
 type Props = {
-    model: List<any>;
+    model: ListModel<any>;
 };
 
 type State = {
@@ -237,23 +237,26 @@ class ListView extends Component<Props, State> {
                                     <table className={'edit__table'}>
                                         <tbody className={'edit__table-body'}>
                                         {
-                                            this.props.model.edit_model?.keys().map(key => {
+                                            this.props.model.edit_model?.keys().map(k => {
                                                 const item = this.props.model.get_item(this.state.selected_item);
+                                                let random = Math.random().toString();
 
                                                 const get_data = (edt: EditType) => {
                                                     switch (edt) {
                                                         case EditType.Label: {
-                                                            if (!key.data) {
-                                                                return null;
-                                                            }
-                                                            return <span>{key.data[0]}</span>;
+                                                            const key = k as Label<any>;
+                                                            return <span>{key.data as string}</span>;
                                                         }
                                                         case EditType.Numberfield: {
+                                                            const key = k as Edit<any>;
+                                                            random = key.binding.toString();
+
                                                             const value = item?.data[key.binding] as number;
                                                             if (key.data) {
                                                                 return <input min={key.data[0]} max={key.data[1]} defaultValue={value}
                                                                               onChange={(e) => {
                                                                                   this.set(key.binding.toString(), +e.target.value);
+
                                                                               }}
                                                                               type='number'/>;
                                                             } else {
@@ -264,16 +267,20 @@ class ListView extends Component<Props, State> {
                                                             }
                                                         }
                                                         case EditType.Combobox: {
+                                                            const key = k as Edit<any>;
+                                                            random = key.binding.toString();
+
                                                             if (!key.data) {
                                                                 return null;
                                                             }
-                                                            const value = key.data;
+                                                            const value = key.data as any[];
                                                             const selected = item?.data[key.binding] as string;
                                                             return (
                                                                 <select defaultValue={selected}
                                                                         onChange={(e) => {
                                                                             this.set(key.binding.toString(), e.target.value);
-                                                                        }}>
+                                                                        }}
+                                                                >
                                                                     {
                                                                         value.map(val => {
                                                                             return (
@@ -286,8 +293,11 @@ class ListView extends Component<Props, State> {
                                                             );
                                                         }
                                                         case EditType.CheckboxList: {
+                                                            const key = k as Edit<any>;
+                                                            random = key.binding.toString();
+
                                                             if (key.data) {
-                                                                const value = key.data;
+                                                                const value = key.data as any[];
                                                                 return (
                                                                     value.map(val => {
                                                                         return (
@@ -315,6 +325,9 @@ class ListView extends Component<Props, State> {
                                                             return null;
                                                         }
                                                         case EditType.Textarea: {
+                                                            const key = k as Edit<any>;
+                                                            random = key.binding.toString();
+
                                                             const value = item?.data[key.binding] as string;
                                                             return <textarea defaultValue={value} cols={40} rows={20}
                                                                              onChange={(e) => {
@@ -322,6 +335,9 @@ class ListView extends Component<Props, State> {
                                                                              }}/>;
                                                         }
                                                         case EditType.Textfield: {
+                                                            const key = k as Edit<any>;
+                                                            random = key.binding.toString();
+
                                                             const value = item?.data[key.binding] as string;
                                                             return <input type='text' defaultValue={value}
                                                                           onChange={(e) => {
@@ -329,22 +345,32 @@ class ListView extends Component<Props, State> {
                                                                           }}/>;
                                                         }
                                                         case EditType.Checkbox: {
+                                                            const key = k as Edit<any>;
+                                                            random = key.binding.toString();
+
                                                             const value = item?.data[key.binding] as boolean;
                                                             return <input defaultChecked={value} type='checkbox'
                                                                           onChange={(e) => {
                                                                               this.set(key.binding.toString(), e.target.checked);
                                                                           }}/>;
                                                         }
+                                                        case EditType.Space: {
+                                                            return <br/>;
+                                                        }
                                                     }
                                                 };
-
+                                                // if (random === undefined) {
+                                                //     const key = k as Edit<any>;
+                                                //     random = key.binding.toString();
+                                                // }
+                                                const d = get_data(k.type);
                                                 return (
-                                                    <tr key={hash(key.binding.toString())}>
+                                                    <tr key={random}>
                                                         {
-                                                            key.type !== EditType.Label &&
-                                                            <td>{this.props.model.summary_model.text_from_key(key.binding)}</td>
+                                                            (k.type !== EditType.Label && k.type !== EditType.Space) &&
+                                                            <td className={'edit__table-keys'}>{this.props.model.summary_model.text_from_key((k as Edit<any>).binding)}</td>
                                                         }
-                                                        <td>{get_data(key.type)}</td>
+                                                        <td>{d}</td>
                                                     </tr>);
                                             })
                                         }

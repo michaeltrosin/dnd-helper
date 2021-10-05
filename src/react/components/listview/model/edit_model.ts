@@ -9,12 +9,13 @@ enum EditType {
     Textarea,
     Numberfield,
     Label,
+    Space,
 }
 
 // TODO: Add combining of types
 
 type Edit<Type> = {
-    type: EditType;
+    type: Exclude<Exclude<EditType, EditType.Space>, EditType.Label>;
     binding: keyof (Type);
     /**
      * With type = Numberfield: data[0] = min; data[1] = max;
@@ -23,6 +24,17 @@ type Edit<Type> = {
      */
     data?: any[];
 };
+
+type Space<Type> = {
+    type: EditType.Space
+};
+
+type Label<Type> = {
+    type: EditType.Label,
+    data: string;
+};
+
+type EditModelKeys<Type> = Edit<Type> | Space<Type> | Label<Type>;
 
 abstract class EditModel<Type> {
     protected request_save_event: LiteEvent<void> = new LiteEvent();
@@ -40,7 +52,7 @@ abstract class EditModel<Type> {
         return Promise.resolve();
     }
 
-    abstract keys(): Edit<Type>[];
+    abstract keys(): EditModelKeys<Type>[];
 
     abstract binding_key_value(binding: keyof (Type), key: string): string;
 
@@ -53,4 +65,4 @@ abstract class EditModel<Type> {
     abstract to_html_body(item: Type): string;
 }
 
-export {EditModel, Edit, EditType};
+export {EditModel, Edit, EditType, Space, EditModelKeys, Label};

@@ -51,6 +51,8 @@ export const SpellConstants = {
         self_radius_feet: 'Selbst (...ft. großer Radius)',
         self_cube_feet: 'Selbst (...ft. großer Würfel)',
 
+        unlimited: 'Unbegrenzt',
+
         touch: 'Berührung',
         meter: 'Meter',
         feet: 'Fuß',

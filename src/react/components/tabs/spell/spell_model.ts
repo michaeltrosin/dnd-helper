@@ -1,10 +1,18 @@
 import {DialogChannel} from '@/electron/channels/dialog_channel';
 import {Bottombar, BottombarComponent} from '@/react/components/bottombar/bottombar';
-import {Edit, EditModel, EditType} from '@/react/components/listview/model/edit_model';
-import {FilterType, ItemId, List, ListPreview} from '@/react/components/listview/model/listview_model';
+import {Edit, EditModel, EditModelKeys, EditType, Space} from '@/react/components/listview/model/edit_model';
+import {FilterType, ItemId, ListModel, ListPreview} from '@/react/components/listview/model/listview_model';
 import {SummaryModel} from '@/react/components/listview/model/preview_model';
-import {convert_spell, ISpell} from '@/react/components/spell/types/spell';
-import {Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellConstants, TimeUnit} from '@/react/components/spell/types/spell_types';
+import {convert_spell, ISpell} from '@/react/components/tabs/spell/types/spell';
+import {
+    Attribute,
+    DurationUnit,
+    RangeUnit,
+    School,
+    SpellClass,
+    SpellConstants,
+    TimeUnit,
+} from '@/react/components/tabs/spell/types/spell_types';
 import {Channels} from '@/shared/channels';
 import {ipc_request} from '@/shared/ipc';
 import {SourceBook, SourceBooks, SourceBooksSpell} from '@/shared/source_books';
@@ -96,7 +104,7 @@ class SpellSummaryModel extends SummaryModel<ISpell> {
                 return `${SpellConstants.range_units[format].replace('...', value.toString())}`;
             }
 
-            if (format === 'self' || format === 'touch' || format === 'sight') {
+            if (format === 'self' || format === 'touch' || format === 'sight' || format === 'unlimited') {
                 return SpellConstants.range_units[format];
             }
 
@@ -163,6 +171,8 @@ class SpellSummaryModel extends SummaryModel<ISpell> {
                 return '';
             case 'time_consumption_value':
                 return 'Zeitaufwand';
+            case 'time_consumption_extra':
+                return '~Zusatz';
 
             case 'range_format':
                 return '';
@@ -190,6 +200,7 @@ class SpellSummaryModel extends SummaryModel<ISpell> {
             'school',
             'ritual',
             'time_consumption',
+            'time_consumption_extra',
             'range',
             'target',
             'components',
@@ -294,6 +305,7 @@ class SpellEditModel extends EditModel<ISpell> {
             ritual: false,
             time_consumption_value: 0,
             time_consumption_format: 'action',
+            time_consumption_extra: '',
             time_consumption: {
                 value: 0,
                 format: 'action',
@@ -333,7 +345,7 @@ class SpellEditModel extends EditModel<ISpell> {
         return JSON.stringify(convert_spell(item));
     }
 
-    keys(): Edit<ISpell>[] {
+    keys(): EditModelKeys<ISpell>[] {
         return [
             {
                 type: EditType.Textfield,
@@ -355,6 +367,9 @@ class SpellEditModel extends EditModel<ISpell> {
                 data: SourceBooksSpell,
             },
             {
+                type: EditType.Space,
+            },
+            {
                 type: EditType.CheckboxList,
                 binding: 'classes',
                 data: Object.keys(SpellConstants.classes),
@@ -368,6 +383,9 @@ class SpellEditModel extends EditModel<ISpell> {
                 type: EditType.Checkbox,
                 binding: 'ritual',
             },
+            {
+                type: EditType.Space,
+            },
 
             {
                 type: EditType.Numberfield,
@@ -378,6 +396,13 @@ class SpellEditModel extends EditModel<ISpell> {
                 type: EditType.Combobox,
                 binding: 'time_consumption_format',
                 data: Object.keys(SpellConstants.time_units),
+            },
+            {
+                type: EditType.Textfield,
+                binding: 'time_consumption_extra',
+            },
+            {
+                type: EditType.Space,
             },
 
             {
@@ -391,13 +416,18 @@ class SpellEditModel extends EditModel<ISpell> {
                 data: Object.keys(SpellConstants.range_units),
             },
             {
+                type: EditType.Space,
+            },
+            {
                 type: EditType.Textfield,
                 binding: 'target',
             },
             {
+                type: EditType.Space,
+            },
+            {
                 type: EditType.Label,
-                binding: '_id',
-                data: ['Komponente'],
+                data: 'Komponente',
             },
 
             {
@@ -411,6 +441,9 @@ class SpellEditModel extends EditModel<ISpell> {
             {
                 type: EditType.Textfield,
                 binding: 'components_material',
+            },
+            {
+                type: EditType.Space,
             },
 
             {
@@ -435,6 +468,9 @@ class SpellEditModel extends EditModel<ISpell> {
                 type: EditType.Combobox,
                 binding: 'attributes',
                 data: Object.keys(SpellConstants.attributes),
+            },
+            {
+                type: EditType.Space,
             },
             {
                 type: EditType.Textarea,
@@ -505,7 +541,7 @@ type Sorting = {
     dir: 'asc' | 'desc';
 };
 
-class SpellModel extends List<ISpell> {
+class SpellModel extends ListModel<ISpell> {
     private title_string = '';
 
     private sortings: Map<string, Sorting> = new Map<string, Sorting>([
@@ -616,7 +652,7 @@ class SpellModel extends List<ISpell> {
         // 1. Filter;
         const filtered: ItemId[] = Array.from(this.Items.keys()).filter(id => {
             const item = this.get_item(id)?.data;
-            if (!item) {
+            if (item === undefined) {
                 return false;
             }
 
@@ -625,6 +661,9 @@ class SpellModel extends List<ISpell> {
             for (const [binding, {data}] of Array.from(this.filter_data.entries())) {
                 if (Array.isArray(item[binding])) {
                     includes = includes && data.some(t => {
+                        if ((item[binding] as any[]).length === 0) {
+                            return true;
+                        }
                         return (item[binding] as any[]).includes(t);
                     });
                 } else {
