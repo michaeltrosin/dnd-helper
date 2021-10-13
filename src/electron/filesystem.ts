@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 
 class Filesystem {
-    static Appdata: string = process.env.APPDATA || (process.platform === 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + '/.local/share');
+    static Appdata: string = app.getPath('appData');
 
     static RootFolder: string = Path.join(Filesystem.Appdata, app.getName(), '/data');
     static StoreFolder: string = Path.join(Filesystem.RootFolder, '/store');

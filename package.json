@@ -43,12 +43,12 @@
   },
   "scripts": {
     "build": "webpack",
-    "prepack": "if exist \"build\\\" (rmdir /s /q build)",
+    "prepack": "rm -rf build",
     "react:dev": "webpack serve --mode=development",
     "electron:dev": "nodemon",
     "dev": "concurrently --kill-others \"npm run react:dev\" \"npm run electron:dev\"",
     "start": "npm run build && electron dist/main.js",
-    "pack": "npm run prepack && npm run build && electron-builder --win --publish never",
+    "pack": "npm run prepack && npm run build && electron-builder --win --mac --publish never",
     "release": "npm run prepack && npm run build && electron-builder --win --publish always"
   },
   "build": {

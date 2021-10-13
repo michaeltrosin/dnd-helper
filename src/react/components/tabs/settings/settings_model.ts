@@ -187,7 +187,7 @@ class SettingsModel extends ListModel<SettingsModelType> {
             }),
             Bottombar.button('Anwenden', () => {
                 this.refresh();
-                window.location.reload(false);
+                window.location.reload();
             }),
         ];
     }
