@@ -11,15 +11,7 @@ import { SourceBook, SourceBooks, SourceBooksSpell } from '@/shared/source_books
 
 import '@/utils/extensions';
 import './spell_list.scss';
-
-const root_url = 'https://dnd.ra6.io/spells';
-
-const urls = {
-    add: `${root_url}/add`,
-    edit: `${root_url}/edit/:id`,
-    get_all: `${root_url}/get_all`,
-    get_by_name: `${root_url}/search/:name`
-};
+import { DEFAULT_GET_OPTIONS, DEFAULT_POST_OPTIONS, SPELL_URLS } from '@/shared/urls';
 
 class SpellSummaryModel extends SummaryModel<ISpell> {
     text_from_value(key: keyof ISpell, item: ISpell): string {
@@ -241,12 +233,6 @@ class SpellEditModel extends EditModel<ISpell> {
     validate_and_save(object: ISpell, selected_object: ISpell | undefined): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             this.check_input(object).then(() => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: this.to_html_body(object),
-                };
-
                 if (selected_object === undefined) {
                     ipc_request<DialogChannel>(Channels.Dialog, {
                         type: 'question',
@@ -255,7 +241,7 @@ class SpellEditModel extends EditModel<ISpell> {
                         title: 'Speichern',
                     }).then(result => {
                         if (result.selected_index === 0) {
-                            fetch(urls.add, requestOptions)
+                            fetch(SPELL_URLS.ADD, DEFAULT_POST_OPTIONS(this.to_html_body(object)))
                                 .then(res => res.json())
                                 .then(() => {
                                     resolve();
@@ -272,7 +258,7 @@ class SpellEditModel extends EditModel<ISpell> {
                         title: 'Änderungen Speichern',
                     }).then(result => {
                         if (result.selected_index === 0) {
-                            fetch(urls.edit.replace(':id', selected_object._id as string), requestOptions)
+                            fetch(SPELL_URLS.EDIT.replace(':id', selected_object._id as string), DEFAULT_POST_OPTIONS(this.to_html_body(object)))
                                 .then(res => res.json())
                                 .then(() => {
                                     resolve();
@@ -588,17 +574,13 @@ class SpellModel extends ListModel<ISpell> {
     }
 
     fetch_items(): void {
-        const requestOptions = {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'},
-        };
         let url: string;
         if (this.title_string.empty()) {
-            url = urls.get_all;
+            url = SPELL_URLS.GET_ALL;
         } else {
-            url = urls.get_by_name.replace(':name', this.title_string);
+            url = SPELL_URLS.GET_BY_NAME.replace(':name', this.title_string);
         }
-        fetch(url, requestOptions)
+        fetch(url, DEFAULT_GET_OPTIONS)
             .then(res => res.json())
             .then(res => {
                 this.clear();
