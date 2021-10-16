@@ -1,5 +1,5 @@
 import {SettingsChannel, SettingsRequestMethod} from '@/electron/channels/settings_channel';
-import {SettingsProfile} from '@/electron/files/settings_file';
+import {SettingsProfileType} from '@/electron/files/settings_file';
 import {Bottombar, BottombarComponent} from '@/react/components/bottombar/bottombar';
 import {Edit, EditModel, EditType} from '@/react/components/listview/model/edit_model';
 import {ItemId, ListModel, ListPreview} from '@/react/components/listview/model/listview_model';
@@ -10,7 +10,7 @@ import {ipc_request} from '@/shared/ipc';
 import '@/utils/extensions';
 import {ILiteEvent, LiteEvent} from '@/utils/event';
 
-type SettingsModelType = SettingsProfile;
+type SettingsModelType = SettingsProfileType;
 
 class SettingsEditModel extends EditModel<SettingsModelType> {
     binding_key_value(binding: keyof SettingsModelType, key: string): string {

@@ -9,6 +9,7 @@ import {Updater} from '@/electron/updater';
 import {AbstractIpcChannel} from '@/shared/ipc';
 import {app, BrowserWindow, ipcMain} from 'electron';
 import isDev from 'electron-is-dev';
+import { Changelog } from '@/electron/changelog';
 
 let win: BrowserWindow;
 let settings: Settings;
@@ -26,6 +27,9 @@ app.on('ready', () => {
     settings = new Settings().load();
 
     create_window();
+    // if (settings.get('show_changelog')){
+    //     Changelog.show_latest(win);
+    // }
 
     win.on('close', () => {
         settings
@@ -36,7 +40,7 @@ app.on('ready', () => {
     });
 
     if (!isDev) {
-        Updater.begin_update_checking(win);
+        Updater.begin_update_checking(win, settings);
     }
 });
 

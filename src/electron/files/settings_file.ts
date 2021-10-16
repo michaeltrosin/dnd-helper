@@ -2,28 +2,31 @@ import {FileStore} from '@/electron/files/file_store';
 import {Theme} from '@/shared/colors';
 import isDev from 'electron-is-dev';
 
-type SettingsProfile = {
+type SettingsProfileType = {
     [name: string]: any;
     name: string;
     theme: Theme;
     edit: boolean;
 };
 
-type SettingsValues = {
+type SettingsType = {
     width: number;
     height: number;
     maximized: boolean;
+    show_changelog: boolean;
 
     selected: string;
-    profiles: SettingsProfile[];
+    profiles: SettingsProfileType[];
 };
 
-class Settings extends FileStore<SettingsValues> {
+class Settings extends FileStore<SettingsType> {
     constructor() {
         super('settings', {
             width: 1280,
             height: 720,
             maximized: false,
+
+            show_changelog: true,
 
             selected: 'Default',
 
@@ -35,7 +38,7 @@ class Settings extends FileStore<SettingsValues> {
         });
     }
 
-    set_profile(profile: SettingsProfile): void {
+    set_profile(profile: SettingsProfileType): void {
         const existing = this.data.profiles.findIndex(a => {
             return a.name === profile.name;
         });
@@ -53,4 +56,4 @@ class Settings extends FileStore<SettingsValues> {
     }
 }
 
-export {Settings, SettingsValues, SettingsProfile};
+export {Settings, SettingsType, SettingsProfileType};

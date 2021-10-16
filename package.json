@@ -1,6 +1,6 @@
 {
   "name": "dnd-helper",
-  "version": "0.3.2",
+  "version": "0.3.5",
   "author": "ra6nar0k21",
   "description": "",
   "private": true,
@@ -43,29 +43,25 @@
   },
   "scripts": {
     "build": "webpack",
-    "prepack": "rm -rf build",
     "react:dev": "webpack serve --mode=development",
     "electron:dev": "nodemon",
     "dev": "concurrently --kill-others \"npm run react:dev\" \"npm run electron:dev\"",
-    "start": "npm run build && electron dist/main.js",
-    "pack": "npm run prepack && npm run build && electron-builder --win --mac --publish never",
-    "release": "npm run prepack && npm run build && electron-builder --win --publish always"
+    "start": "npm run build && electron bin/main.js",
+    "pack": "npm run build && electron-builder --win --mac --publish never",
+    "release": "npm run build && electron-builder --win --mac --publish always"
   },
   "build": {
     "appId": "io.ra6.dndhelper",
-    "directories": {
-      "output": "build"
-    },
     "win": {
       "icon": "asset/icon.png"
     },
     "files": [
-      "dist/**/*",
+      "bin/**/*",
       "asset/icon.*",
       "package.json"
     ],
     "extraMetadata": {
-      "main": "dist/main.js"
+      "main": "bin/main.js"
     }
   },
   "eslintConfig": {

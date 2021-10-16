@@ -1,4 +1,4 @@
-import {Settings, SettingsProfile} from '@/electron/files/settings_file';
+import {Settings, SettingsProfileType} from '@/electron/files/settings_file';
 import {Channels} from '@/shared/channels';
 import {AbstractIpcChannel} from '@/shared/ipc';
 
@@ -14,7 +14,7 @@ type TArgsGet = {
 };
 type TArgsSet = {
     method: Method.Set;
-    values: Partial<SettingsProfile>;
+    values: Partial<SettingsProfileType>;
 };
 type TArgsGetSelected = {
     method: Method.GetSelected,
@@ -28,7 +28,7 @@ type TArgs = TArgsGet | TArgsSet | TArgsGetSelected | TArgsSetSelected;
 
 type TPayloadGet = {
     selected: string;
-    profiles: Readonly<SettingsProfile>[];
+    profiles: Readonly<SettingsProfileType>[];
 };
 
 class SettingsChannel extends AbstractIpcChannel<TArgs, TPayloadGet> {

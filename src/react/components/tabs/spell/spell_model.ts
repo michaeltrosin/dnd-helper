@@ -1,24 +1,25 @@
-import {DialogChannel} from '@/electron/channels/dialog_channel';
-import {Bottombar, BottombarComponent} from '@/react/components/bottombar/bottombar';
-import {Edit, EditModel, EditModelKeys, EditType, Space} from '@/react/components/listview/model/edit_model';
-import {FilterType, ItemId, ListModel, ListPreview} from '@/react/components/listview/model/listview_model';
-import {SummaryModel} from '@/react/components/listview/model/preview_model';
-import {convert_spell, ISpell} from '@/react/components/tabs/spell/types/spell';
-import {
-    Attribute,
-    DurationUnit,
-    RangeUnit,
-    School,
-    SpellClass,
-    SpellConstants,
-    TimeUnit,
-} from '@/react/components/tabs/spell/types/spell_types';
-import {Channels} from '@/shared/channels';
-import {ipc_request} from '@/shared/ipc';
-import {SourceBook, SourceBooks, SourceBooksSpell} from '@/shared/source_books';
+import { DialogChannel } from '@/electron/channels/dialog_channel';
+import { Bottombar, BottombarComponent } from '@/react/components/bottombar/bottombar';
+import { EditModel, EditModelKeys, EditType } from '@/react/components/listview/model/edit_model';
+import { FilterType, ItemId, ListModel, ListPreview } from '@/react/components/listview/model/listview_model';
+import { SummaryModel } from '@/react/components/listview/model/preview_model';
+import { convert_spell, ISpell } from '@/react/components/tabs/spell/types/spell';
+import { Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellConstants, TimeUnit, } from '@/react/components/tabs/spell/types/spell_types';
+import { Channels } from '@/shared/channels';
+import { ipc_request } from '@/shared/ipc';
+import { SourceBook, SourceBooks, SourceBooksSpell } from '@/shared/source_books';
 
 import '@/utils/extensions';
 import './spell_list.scss';
+
+const root_url = 'https://dnd.ra6.io/spells';
+
+const urls = {
+    add: `${root_url}/add`,
+    edit: `${root_url}/edit/:id`,
+    get_all: `${root_url}/get_all`,
+    get_by_name: `${root_url}/search/:name`
+};
 
 class SpellSummaryModel extends SummaryModel<ISpell> {
     text_from_value(key: keyof ISpell, item: ISpell): string {
@@ -247,7 +248,6 @@ class SpellEditModel extends EditModel<ISpell> {
                 };
 
                 if (selected_object === undefined) {
-                    const url = `https://dnd.ra6.io./add`;
                     ipc_request<DialogChannel>(Channels.Dialog, {
                         type: 'question',
                         buttons: ['Ja', 'Nein'],
@@ -255,7 +255,7 @@ class SpellEditModel extends EditModel<ISpell> {
                         title: 'Speichern',
                     }).then(result => {
                         if (result.selected_index === 0) {
-                            fetch(url, requestOptions)
+                            fetch(urls.add, requestOptions)
                                 .then(res => res.json())
                                 .then(() => {
                                     resolve();
@@ -264,7 +264,6 @@ class SpellEditModel extends EditModel<ISpell> {
                         }
                     });
                 } else {
-                    const url = `https://dnd.ra6.io/edit/${selected_object._id}`;
                     console.log(object);
                     ipc_request<DialogChannel>(Channels.Dialog, {
                         type: 'question',
@@ -273,7 +272,7 @@ class SpellEditModel extends EditModel<ISpell> {
                         title: 'Änderungen Speichern',
                     }).then(result => {
                         if (result.selected_index === 0) {
-                            fetch(url, requestOptions)
+                            fetch(urls.edit.replace(':id', selected_object._id as string), requestOptions)
                                 .then(res => res.json())
                                 .then(() => {
                                     resolve();
@@ -595,9 +594,9 @@ class SpellModel extends ListModel<ISpell> {
         };
         let url: string;
         if (this.title_string.empty()) {
-            url = `https://dnd.ra6.io/all`;
+            url = urls.get_all;
         } else {
-            url = `https://dnd.ra6.io/spell/${this.title_string}`;
+            url = urls.get_by_name.replace(':name', this.title_string);
         }
         fetch(url, requestOptions)
             .then(res => res.json())
@@ -722,4 +721,4 @@ class SpellModel extends ListModel<ISpell> {
     }
 }
 
-export {SpellModel, SpellSummaryModel};
+export { SpellModel, SpellSummaryModel };
