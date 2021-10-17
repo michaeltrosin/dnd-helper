@@ -1,13 +1,13 @@
-import {DialogChannel} from '@/electron/channels/dialog_channel';
-import {DisplayInformationChannel} from '@/electron/channels/display_information_channel';
-import {MessageQueueChannel} from '@/electron/channels/message_queue_channel';
-import {SettingsChannel} from '@/electron/channels/settings_channel';
-import {Settings} from '@/electron/files/settings_file';
-import {Filesystem} from '@/electron/filesystem';
-import {Updater} from '@/electron/updater';
+import { DialogChannel } from '@/electron/channels/dialog_channel';
+import { DisplayInformationChannel } from '@/electron/channels/display_information_channel';
+import { MessageQueueChannel } from '@/electron/channels/message_queue_channel';
+import { SettingsChannel } from '@/electron/channels/settings_channel';
+import { Settings } from '@/electron/files/settings_file';
+import { Filesystem } from '@/electron/filesystem';
+import { Updater } from '@/electron/updater';
 
-import {AbstractIpcChannel} from '@/shared/ipc';
-import {app, BrowserWindow, ipcMain} from 'electron';
+import { AbstractIpcChannel } from '@/shared/ipc';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import isDev from 'electron-is-dev';
 import { Changelog } from '@/electron/changelog';
 
@@ -27,9 +27,9 @@ app.on('ready', () => {
     settings = new Settings().load();
 
     create_window();
-    // if (settings.get('show_changelog')){
-    //     Changelog.show_latest(win);
-    // }
+    if (settings.get('show_changelog')) {
+        Changelog.show_changelog(win);
+    }
 
     win.on('close', () => {
         settings

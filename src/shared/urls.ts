@@ -10,7 +10,7 @@ const SPELL_URLS = {
 
 const CHANGELOGS_BASE = `${BASE_URL}/changelogs`;
 const CHANGELOGS_URLS = {
-    LATEST: `${CHANGELOGS_BASE}/latest`
+    SEARCH_BY_VERSION: `${CHANGELOGS_BASE}/search/:version`
 };
 
 const DEFAULT_GET_OPTIONS = {
