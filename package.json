@@ -5,6 +5,7 @@
   "description": "",
   "private": true,
   "dependencies": {
+    "cross-fetch": "^3.1.4",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.3.9",
     "node-sass": "^6.0.1",

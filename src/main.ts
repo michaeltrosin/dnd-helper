@@ -27,8 +27,15 @@ app.on('ready', () => {
     settings = new Settings().load();
 
     create_window();
+    if (settings.get('latest_changelog') !== app.getVersion()) {
+        settings.set('show_changelog', true);
+    }
     if (settings.get('show_changelog')) {
         Changelog.show_changelog(win);
+        settings
+            .set('show_changelog', false)
+            .set('latest_changelog', app.getVersion())
+            .save();
     }
 
     win.on('close', () => {

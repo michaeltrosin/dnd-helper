@@ -13,7 +13,9 @@ type SettingsType = {
     width: number;
     height: number;
     maximized: boolean;
+
     show_changelog: boolean;
+    latest_changelog: string;
 
     selected: string;
     profiles: SettingsProfileType[];
@@ -27,6 +29,7 @@ class Settings extends FileStore<SettingsType> {
             maximized: false,
 
             show_changelog: true,
+            latest_changelog: '0.0.0',
 
             selected: 'Default',
 

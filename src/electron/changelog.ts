@@ -2,6 +2,9 @@ import { app, dialog } from 'electron';
 import { CHANGELOGS_URLS, DEFAULT_GET_OPTIONS } from '@/shared/urls';
 import isDev from 'electron-is-dev';
 
+import fetch from 'cross-fetch';
+import { Settings } from '@/electron/files/settings_file';
+
 class Changelog {
     private constructor() {
     }
