@@ -6,10 +6,11 @@ import { Settings } from '@/electron/files/settings_file';
 import { Filesystem } from '@/electron/filesystem';
 import { Updater } from '@/electron/updater';
 
-import { AbstractIpcChannel } from '@/shared/ipc';
+import { AbstractIpcChannel, ipc_request } from '@/shared/ipc';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import isDev from 'electron-is-dev';
 import { Changelog } from '@/electron/changelog';
+import { Channels } from '@/shared/channels';
 
 let win: BrowserWindow;
 let settings: Settings;

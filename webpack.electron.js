@@ -1,6 +1,6 @@
 const path = require('path');
 
-const rules = require('./img_rules');
+const rules = require('./pack_rules');
 
 module.exports = {
   // Build Mode

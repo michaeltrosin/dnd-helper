@@ -19,7 +19,7 @@ const ThemeColors = {
     silver: '#bdc3c7',
     concrete: '#95a5a6',
     asbestos: '#7f8c8d',
-    
+
     reines_pink: '#FF00FF',
     discord: '#2c2f33',
     t_mobile: '#ea0a8e',
