@@ -1,0 +1,81 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "getter-return": "warn",
+        "no-class-assign": "warn",
+        "no-debugger": "warn",
+        "no-dupe-args": "error",
+        "no-dupe-keys": "error",
+        "no-ex-assign": "error",
+        "no-func-assign": "error",
+        
+        "no-invalid-regexp":"error",
+        "no-irregular-whitespace": "warn",
+        "no-loss-of-precision": "warn",
+        "no-obj-calls": "error",
+        "no-self-assign": "error",
+        "no-unexpected-multiline": "error",
+        "no-unsafe-finally": "warn",
+        "no-unsafe-negation": "warn",
+        "no-unused-vars": "warn",
+        "valid-typeof": "warn",
+
+        "arrow-body-style": "warn",
+        "camelcase": "error",
+        "curly": [
+            "all",
+            "error"
+        ],
+        "default-param-last": "error",
+        "eqeqeq": [
+            "error", 
+            "always", 
+            { "null": "ignore" }
+        ],
+        "func-style": [
+            "error",
+            "expression",
+            { "allowArrowFunctions": true }
+        ],
+
+        "indent": [
+            "error",
+            4,
+            { "SwitchCase": 1 }
+        ],
+        
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}
