@@ -1,4 +1,4 @@
-//const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 const rules = require('./pack_rules');
@@ -46,13 +46,11 @@ module.exports = {
     path: __dirname + '/bin',
     filename: 'renderer.js',
   },
-  /*
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
     }),
   ],
-  */
   "externals": {
     "electron": "require('electron')",
     "child_process": "require('child_process')",
