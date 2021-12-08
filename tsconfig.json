@@ -28,8 +28,7 @@
       ]
     },
     "types": [
-      "jest",
-      "@types/index.d.ts"
+      "jest"
     ]
   },
   "exclude": [
