@@ -22,12 +22,20 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@asset/*": [
+        "asset/*"
       ]
-    }
+    },
+    "types": [
+      "jest",
+      "@types/index.d.ts"
+    ]
   },
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "tests"
   ],
   "lib": [
     "esnext"

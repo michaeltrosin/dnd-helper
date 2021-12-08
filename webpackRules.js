@@ -14,5 +14,10 @@ module.exports = {
   svg: {
     test: /\.svg$/,
     use: ['@svgr/webpack'],
-  },
+  }, 
+  fallback: {
+    'stream': false,
+    'fs': false,
+    'path': false,
+  }
 };

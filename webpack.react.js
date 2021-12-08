@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
-const rules = require('./pack_rules');
+const rules = require('./webpackRules');
 
 module.exports = {
   mode: 'development',
@@ -9,24 +9,26 @@ module.exports = {
   target: 'electron-renderer',
   devtool: 'source-map',
   devServer: {
-    static: path.join(__dirname, 'bin'),// /renderer.js'),
+    static: path.join(__dirname, 'bin'), // /renderer.js'),
     compress: true,
-    
+
     port: 9000,
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      'asset': path.resolve(__dirname, 'asset'),
+      '@asset': path.resolve(__dirname, 'asset'),
     },
-    extensions: ['.tsx', '.ts', '.js', '.png', '.jpg', '.svg'],
+    extensions: ['', '.jsx', '.tsx', '.ts', '.js', '.png', '.jpg', '.svg'],
+    fallback: rules.fallback,
   },
   module: {
     rules: [
       {
         test: /\.ts(x?)$/,
-        include: /src/,
-        use: [{loader: 'ts-loader'}],
+        //include: /src/,
+        exclude: /node_modules/,
+        use: [{ loader: 'ts-loader' }],
       },
       {
         test: /\.s[ac]ss$/i,
@@ -51,10 +53,10 @@ module.exports = {
       template: './src/index.html',
     }),
   ],
-  "externals": {
-    "electron": "require('electron')",
-    "child_process": "require('child_process')",
-    "fs": "require('fs')",
-    "path": "require('path')",
+  'externals': {
+    'electron': 'require(\'electron\')',
+    'child_process': 'require(\'child_process\')',
+    'fs': 'require(\'fs\')',
+    'path': 'require(\'path\')',
   },
 };

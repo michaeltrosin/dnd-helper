@@ -1,3 +1,5 @@
+import './index';
+
 import { Background } from '@/react/components/background/background';
 import { ListView } from '@/react/components/listview/list_view';
 import { ListModel } from '@/react/components/listview/model/listview_model';
@@ -7,14 +9,9 @@ import { SettingsModel } from '@/react/components/tabs/settings/settings_model';
 import { SpellModel } from '@/react/components/tabs/spell/spell_model';
 import { CustomStyles } from '@/react/custom_styles';
 import { ThemeColors } from '@/shared/colors';
-
-import logo from 'asset/resource/icons/dnd.png';
 import React, { Component } from 'react';
-
+import logo from '@asset/resource/icons/dnd.png';
 import './app.scss';
-import { ipc_request } from '@/shared/ipc';
-import { Channels } from '@/shared/channels';
-import path from 'path';
 
 type State = {
     style_color: string;
@@ -24,7 +21,6 @@ type State = {
 type Props = {};
 
 class App extends Component<Props, State> {
-
     spellModel = new SpellModel();
     settingsModel = new SettingsModel();
 

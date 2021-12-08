@@ -1,4 +1,4 @@
-import {BrowserWindow, IpcMainEvent, ipcRenderer} from 'electron';
+import { BrowserWindow, IpcMainEvent, ipcRenderer } from 'electron';
 
 enum ResultType {
     Resolved,
@@ -15,14 +15,14 @@ abstract class AbstractIpcChannel<TArgs, TReturn = TArgs> {
     readonly resolve = (event: IpcMainEvent, payload: TReturn) => {
         event.sender.send(AbstractIpcChannel.response_name(this.name), {
             payload,
-            result: ResultType.Resolved
+            result: ResultType.Resolved,
         });
-    }
+    };
 
     readonly reject = (event: IpcMainEvent, error?: Error | string) => {
         event.sender.send(AbstractIpcChannel.response_name(this.name), {
             payload: error,
-            result: ResultType.Rejected
+            result: ResultType.Rejected,
         });
     };
 
@@ -41,7 +41,7 @@ class IpcRequest {
                 if (cargs.result === ResultType.Resolved) {
                     resolve(cargs.payload as GetParamTypes<C>[1]);
                 } else {
-                    reject(cargs.payload as Error);
+                    reject(new Error(String(cargs.payload)));
                 }
             });
             ipcRenderer.send(channel, args);
@@ -49,5 +49,5 @@ class IpcRequest {
     }
 }
 
-export const ipc_request = new IpcRequest().request;
-export {AbstractIpcChannel};
+export const ipcRequest = new IpcRequest().request;
+export { AbstractIpcChannel };

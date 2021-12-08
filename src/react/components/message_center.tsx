@@ -1,6 +1,6 @@
 import {MessageQueueChannel} from '@/electron/channels/message_queue_channel';
 import {Channels} from '@/shared/channels';
-import {ipc_request} from '@/shared/ipc';
+import {ipcRequest} from '@/shared/ipc';
 import {IMessage} from '@/shared/message_queue';
 import {Component} from 'react';
 
@@ -22,7 +22,7 @@ class MessageCenter extends Component<Props, State> {
         };
 
         this.timer_loop = setInterval(() => {
-            ipc_request<MessageQueueChannel>(Channels.MessageQueue, {
+            ipcRequest<MessageQueueChannel>(Channels.MessageQueue, {
                 method: 'get'
             })
                 .then((result: IMessage[]) => {

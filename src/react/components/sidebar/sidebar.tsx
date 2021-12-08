@@ -1,9 +1,9 @@
 import {DisplayInformationChannel} from '@/electron/channels/display_information_channel';
 import {Channels} from '@/shared/channels';
-import {ipc_request} from '@/shared/ipc';
+import {ipcRequest} from '@/shared/ipc';
 import {hash} from '@/utils';
 
-import logo from 'asset/resource/icons/dnd.png';
+import logo from '@asset/resource/icons/dnd.png';
 import {Component} from 'react';
 
 import './sidebar.scss';
@@ -24,7 +24,7 @@ class Sidebar extends Component<Props, any> {
     }
 
     display_info(): void {
-        ipc_request<DisplayInformationChannel>(Channels.DisplayInformation, {}).then();
+        ipcRequest<DisplayInformationChannel>(Channels.DisplayInformation, {}).then();
     }
 
     render(): JSX.Element {

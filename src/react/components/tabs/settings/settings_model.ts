@@ -6,7 +6,7 @@ import {ItemId, ListModel, ListPreview} from '@/react/components/listview/model/
 import {SummaryModel} from '@/react/components/listview/model/preview_model';
 import {Channels} from '@/shared/channels';
 import {Theme, ThemeColors} from '@/shared/colors';
-import {ipc_request} from '@/shared/ipc';
+import {ipcRequest} from '@/shared/ipc';
 import '@/utils/extensions';
 import {ILiteEvent, LiteEvent} from '@/utils/event';
 
@@ -33,7 +33,7 @@ class SettingsEditModel extends EditModel<SettingsModelType> {
 
     validate_and_save(object: SettingsModelType, selected_object: SettingsModelType | undefined): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            ipc_request<SettingsChannel>(Channels.Settings, {
+            ipcRequest<SettingsChannel>(Channels.Settings, {
                 method: SettingsRequestMethod.Set,
                 values: {
                     name: object.name,
@@ -156,7 +156,7 @@ class SettingsModel extends ListModel<SettingsModelType> {
     }
 
     refresh(): void {
-        ipc_request<SettingsChannel>(Channels.Settings, {
+        ipcRequest<SettingsChannel>(Channels.Settings, {
             method: SettingsRequestMethod.Get,
         }).then(payload => {
             this.clear();

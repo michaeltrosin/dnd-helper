@@ -158,5 +158,9 @@
     "plugins": [
         "prettier",
         "@typescript-eslint"
-    ]
+    ],
+    "globals": {
+        "React": true,
+        "JSX": true
+    }
 }

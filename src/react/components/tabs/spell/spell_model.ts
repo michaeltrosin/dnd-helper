@@ -6,7 +6,7 @@ import { SummaryModel } from '@/react/components/listview/model/preview_model';
 import { convert_spell, ISpell } from '@/react/components/tabs/spell/types/spell';
 import { Attribute, DurationUnit, RangeUnit, School, SpellClass, SpellConstants, TimeUnit, } from '@/react/components/tabs/spell/types/spell_types';
 import { Channels } from '@/shared/channels';
-import { ipc_request } from '@/shared/ipc';
+import { ipcRequest } from '@/shared/ipc';
 import { SourceBook, SourceBooks, SourceBooksSpell } from '@/shared/source_books';
 
 import '@/utils/extensions';
@@ -234,7 +234,7 @@ class SpellEditModel extends EditModel<ISpell> {
         return new Promise<void>((resolve, reject) => {
             this.check_input(object).then(() => {
                 if (selected_object === undefined) {
-                    ipc_request<DialogChannel>(Channels.Dialog, {
+                    ipcRequest<DialogChannel>(Channels.Dialog, {
                         type: 'question',
                         buttons: ['Ja', 'Nein'],
                         message: 'Sicher, dass du Speichern willst?',
@@ -251,7 +251,7 @@ class SpellEditModel extends EditModel<ISpell> {
                     });
                 } else {
                     console.log(object);
-                    ipc_request<DialogChannel>(Channels.Dialog, {
+                    ipcRequest<DialogChannel>(Channels.Dialog, {
                         type: 'question',
                         buttons: ['Ja', 'Nein'],
                         message: 'Sicher, dass du die Änderungen speichern willst?',
@@ -511,7 +511,7 @@ class SpellEditModel extends EditModel<ISpell> {
                 return;
             }
 
-            ipc_request<DialogChannel>(Channels.Dialog, {
+            ipcRequest<DialogChannel>(Channels.Dialog, {
                 type: 'question',
                 buttons: ['Ok'],
                 title: 'Achtung!',
