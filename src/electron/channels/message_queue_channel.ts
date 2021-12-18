@@ -1,6 +1,6 @@
-import {Channels} from '@/shared/channels';
-import {AbstractIpcChannel} from '@/shared/ipc';
-import {IMessage, IMessageMessageType} from '@/shared/message_queue';
+import { Channels } from '@/shared/channels';
+import { AbstractIpcChannel } from '@/shared/ipc';
+import { IMessage, IMessageMessageType } from '@/shared/message_queue';
 
 type TArgs = {
     method: 'get';
@@ -24,34 +24,34 @@ class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
         return Channels.MessageQueue;
     }
 
-    push_raw(message: IMessage, length: number = 2000): void {
+    push_raw(message: IMessage, length = 2000): void {
         this.messages.set(this.current_index++, {
             message,
             length,
-            sent_at: Date.now()
+            sent_at: Date.now(),
         });
     }
 
-    push(title: string, message: string, type: IMessageMessageType = 'info', length: number = 2000): void {
+    push(title: string, message: string, type: IMessageMessageType = 'info', length = 2000): void {
         this.push_raw({
             type,
             title,
-            content: message
+            content: message,
         });
     }
 
     handle(win: Electron.BrowserWindow, event: Electron.IpcMainEvent, args: TArgs): void {
         // Recalculate
         const now = Date.now();
-        const to_delete: number[] = [];
+        const toDelete: number[] = [];
 
         this.messages.forEach((message, index) => {
             if (now - message.sent_at > message.length) {
-                to_delete.push(index);
+                toDelete.push(index);
             }
         });
 
-        to_delete.forEach((index) => {
+        toDelete.forEach((index) => {
             this.messages.delete(index);
         });
 
@@ -69,4 +69,4 @@ class MessageQueueChannel extends AbstractIpcChannel<TArgs, TReturn> {
     }
 }
 
-export {MessageQueueChannel};
+export { MessageQueueChannel };

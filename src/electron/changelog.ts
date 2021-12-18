@@ -7,6 +7,7 @@ import { Settings } from '@/electron/files/settings_file';
 
 class Changelog {
     private constructor() {
+        //
     }
 
     // TODO: Fetch cannot be found
@@ -17,7 +18,7 @@ class Changelog {
                 dialog.showMessageBox(browser, {
                     title: 'Changelog version ' + res.version,
                     message: res.title,
-                    detail: res.content
+                    detail: res.content,
                 }).then();
             }).catch(err => console.error(err));
     }

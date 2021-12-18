@@ -1,6 +1,6 @@
-import {Settings, SettingsProfileType} from '@/electron/files/settings_file';
-import {Channels} from '@/shared/channels';
-import {AbstractIpcChannel} from '@/shared/ipc';
+import { Settings, SettingsProfileType } from '@/electron/files/settings_file';
+import { Channels } from '@/shared/channels';
+import { AbstractIpcChannel } from '@/shared/ipc';
 
 enum Method {
     Get,
@@ -60,14 +60,14 @@ class SettingsChannel extends AbstractIpcChannel<TArgs, TPayloadGet> {
 
             const name = profile.name;
 
-            for (const key of Object.keys(args.values)) {
-                if (args.values[key] !== undefined) {
-                    profile[key] = args.values[key];
-                }
-            }
+            // for (const key of Object.keys(args.values)) {
+            //     if (args.values[key] !== undefined) {
+            //         profile[key] = args.values[key];
+            //     }
+            // }
             profile.name = name;
 
-            this.settings.set_profile(profile);
+            this.settings.setProfile(profile);
             this.settings.save();
             this.resolve(event, {
                 profiles: [profile],
@@ -110,4 +110,4 @@ class SettingsChannel extends AbstractIpcChannel<TArgs, TPayloadGet> {
     }
 }
 
-export {SettingsChannel, Method as SettingsRequestMethod};
+export { SettingsChannel, Method as SettingsRequestMethod };

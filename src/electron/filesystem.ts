@@ -1,4 +1,4 @@
-import {app} from 'electron';
+import { app } from 'electron';
 import * as fs from 'fs';
 import * as Path from 'path';
 
@@ -21,4 +21,4 @@ class Filesystem {
     }
 }
 
-export {Filesystem};
+export { Filesystem };

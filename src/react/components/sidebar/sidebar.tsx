@@ -1,10 +1,10 @@
-import {DisplayInformationChannel} from '@/electron/channels/display_information_channel';
-import {Channels} from '@/shared/channels';
-import {ipcRequest} from '@/shared/ipc';
-import {hash} from '@/utils';
+import { DisplayInformationChannel } from '@/electron/channels/display_information_channel';
+import { Channels } from '@/shared/channels';
+import { ipcRequest } from '@/shared/ipc';
+import { hash } from '@/utils';
 
 import logo from '@asset/resource/icons/dnd.png';
-import {Component} from 'react';
+import { Component } from 'react';
 
 import './sidebar.scss';
 
@@ -32,7 +32,7 @@ class Sidebar extends Component<Props, any> {
             <div className='sidebar'>
                 <div className='sidebar__icon sidebar__component'>
                     <span className='d l'>D</span>
-                    <img src={logo} alt=''/>
+                    <img src={logo} alt='' />
                     <span className='d r'>D</span>
                     <div className='helper'><span>Helper</span></div>
                 </div>
@@ -40,7 +40,7 @@ class Sidebar extends Component<Props, any> {
                     this.props.buttons.map(prop => {
                         return (
                             <div key={hash(prop)} className='sidebar__button sidebar__component'
-                                 onClick={() => this.props.change_page_cb(prop)}>
+                                onClick={() => this.props.change_page_cb(prop)}>
                                 <span className='sidebar__button__title'>{`${prop[0].toUpperCase()}${prop.substr(1)}`}</span>
                             </div>
                         );
@@ -55,4 +55,4 @@ class Sidebar extends Component<Props, any> {
     }
 }
 
-export {Sidebar};
+export { Sidebar };

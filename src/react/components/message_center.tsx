@@ -1,29 +1,30 @@
-import {MessageQueueChannel} from '@/electron/channels/message_queue_channel';
-import {Channels} from '@/shared/channels';
-import {ipcRequest} from '@/shared/ipc';
-import {IMessage} from '@/shared/message_queue';
-import {Component} from 'react';
+import { MessageQueueChannel } from '@/electron/channels/message_queue_channel';
+import { Channels } from '@/shared/channels';
+import { ipcRequest } from '@/shared/ipc';
+import { IMessage } from '@/shared/message_queue';
+import { Component } from 'react';
 
 import '../styles/message_center.scss';
 
 type State = {
     messages: Array<IMessage>;
 };
-type Props = {};
+type Props = any;
 
 class MessageCenter extends Component<Props, State> {
+    // eslint-disable-next-line no-undef
     timer_loop: NodeJS.Timeout | undefined;
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            messages: []
+            messages: [],
         };
 
         this.timer_loop = setInterval(() => {
             ipcRequest<MessageQueueChannel>(Channels.MessageQueue, {
-                method: 'get'
+                method: 'get',
             })
                 .then((result: IMessage[]) => {
                     // Change adding and removing
@@ -31,11 +32,11 @@ class MessageCenter extends Component<Props, State> {
                         console.log(msg);
                     });
                     this.setState({
-                        messages: result
+                        messages: result,
                     });
                 })
                 .catch(error => {
-                    console.log(error);
+                    console.error(error);
                 });
         }, 200);
     }
@@ -64,4 +65,4 @@ class MessageCenter extends Component<Props, State> {
     }
 }
 
-export {MessageCenter};
+export { MessageCenter };

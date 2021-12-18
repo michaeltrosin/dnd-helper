@@ -1,5 +1,3 @@
-import './index';
-
 import { Background } from '@/react/components/background/background';
 import { ListView } from '@/react/components/listview/list_view';
 import { ListModel } from '@/react/components/listview/model/listview_model';
@@ -13,12 +11,15 @@ import React, { Component } from 'react';
 import logo from '@asset/resource/icons/dnd.png';
 import './app.scss';
 
+// ! Konzentration immer auf ja ? maybe db abfrage falsch?
+// ! V und S immer auf True ? auslesefehler?
+
 type State = {
     style_color: string;
     model: Model<any>;
 };
 
-type Props = {};
+type Props = any;
 
 class App extends Component<Props, State> {
     spellModel = new SpellModel();
@@ -35,7 +36,7 @@ class App extends Component<Props, State> {
         };
 
         this.settingsModel.refresh();
-        this.settingsModel.request_change.on(() => {
+        this.settingsModel.requestChange.on(() => {
             this.forceUpdate();
             console.info('Updating');
         });
@@ -47,7 +48,7 @@ class App extends Component<Props, State> {
         };
         return (
             <>
-                <Background image={logo}/>
+                <Background image={logo} />
                 <div id='app' style={style}>
                     <Sidebar change_page_cb={page => {
                         this.listview.current?.request_switch().then(() => {
@@ -61,15 +62,14 @@ class App extends Component<Props, State> {
                                 });
                             }
                         });
-                    }} buttons={['spells', 'settings']}/>
+                    }} buttons={['spells', 'settings']} />
                     {
                         (this.state.model instanceof ListModel) &&
-                        <ListView ref={this.listview} model={this.state.model}/>
+                        <ListView ref={this.listview} model={this.state.model} />
                     }
                 </div>
             </>
-        )
-            ;
+        );
     }
 }
 

@@ -1,4 +1,4 @@
-import {Filesystem} from '@/electron/filesystem';
+import { Filesystem } from '@/electron/filesystem';
 import fs from 'fs';
 import Path from 'path';
 
@@ -6,7 +6,7 @@ class FileStore<TData> {
     private readonly path: string;
 
     constructor(private name: string,
-                protected data: TData) {
+        protected data: TData) {
         this.path = Path.join(Filesystem.StoreFolder, `${this.name}.store`);
         this.load();
     }
@@ -41,9 +41,9 @@ class FileStore<TData> {
             encoding: 'ascii',
         });
 
-        this.data = {...this.data, ...JSON.parse(read)};
+        this.data = { ...this.data, ...JSON.parse(read) };
         return this;
     }
 }
 
-export {FileStore};
+export { FileStore };

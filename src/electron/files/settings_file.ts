@@ -1,9 +1,8 @@
-import {FileStore} from '@/electron/files/file_store';
-import {Theme} from '@/shared/colors';
+import { FileStore } from '@/electron/files/file_store';
+import { Theme } from '@/shared/colors';
 import isDev from 'electron-is-dev';
 
 type SettingsProfileType = {
-    [name: string]: any;
     name: string;
     theme: Theme;
     edit: boolean;
@@ -41,7 +40,7 @@ class Settings extends FileStore<SettingsType> {
         });
     }
 
-    set_profile(profile: SettingsProfileType): void {
+    setProfile(profile: SettingsProfileType): void {
         const existing = this.data.profiles.findIndex(a => {
             return a.name === profile.name;
         });
@@ -59,4 +58,4 @@ class Settings extends FileStore<SettingsType> {
     }
 }
 
-export {Settings, SettingsType, SettingsProfileType};
+export { Settings, SettingsType, SettingsProfileType };

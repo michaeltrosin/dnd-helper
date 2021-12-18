@@ -2,7 +2,7 @@ import { DialogChannel } from '@/electron/channels/dialog_channel';
 import { ItemId, ListModel } from '@/react/components/listview/model/listview_model';
 import { Channels } from '@/shared/channels';
 import { ipcRequest } from '@/shared/ipc';
-import Splitter, { SplitDirection } from '@devbookhq/splitter'
+import Splitter, { SplitDirection } from '@devbookhq/splitter';
 import { hash } from '@/utils';
 import '@/utils/extensions';
 import React, { Component } from 'react';
@@ -11,18 +11,18 @@ import { ListHeader } from './header/list_header';
 import { ListItem } from './item/list_item';
 import { Bottombar } from '../bottombar/bottombar';
 import { Edit, EditType, Label } from './model/edit_model';
-
+import { getNested, setNested } from '@/utils/generics';
 
 type Props = {
     model: ListModel<any>;
 };
 
 type State = {
-    selected_item: ItemId;
+    selectedItem: ItemId;
     filter_open: boolean;
-    edit_mode: boolean;
-    new_object: boolean;
-    edit_object: any;
+    editMode: boolean;
+    newObject: boolean;
+    editObject: any;
     refresh_filter: boolean;
 };
 
@@ -31,11 +31,11 @@ class ListView extends Component<Props, State> {
         super(props);
 
         this.state = {
-            selected_item: -1,
+            selectedItem: -1,
             filter_open: false,
-            edit_mode: false,
-            new_object: false,
-            edit_object: {},
+            editMode: false,
+            newObject: false,
+            editObject: {},
             refresh_filter: false,
         };
 
@@ -43,38 +43,38 @@ class ListView extends Component<Props, State> {
     }
 
     private add_events(): void {
-        this.props.model.request_change.clear().on(() => {
+        this.props.model.requestChange.clear().on(() => {
             this.setState({
-                selected_item: -1,
+                selectedItem: -1,
             });
 
             this.forceUpdate();
             console.info('Updating');
         });
-        this.props.model.item_clicked.clear().on((item: ItemId | undefined) => {
-            console.log(item);
+        this.props.model.itemClicked.clear().on((item: ItemId | undefined) => {
+            // console.log(item);
             if (item !== undefined) {
-                if (!this.state.edit_mode) {
+                if (!this.state.editMode) {
                     this.setState({
-                        selected_item: item,
+                        selectedItem: item,
                     });
                 }
             }
         });
-        this.props.model.trigger_filter.clear().on(() => {
+        this.props.model.triggerFilter.clear().on(() => {
             this.setState({
                 filter_open: !this.state.filter_open,
             });
-            console.log('filter', this.state.filter_open);
+            // console.log('filter', this.state.filter_open);
         });
-        this.props.model.summary_model.request_edit.clear().on(() => {
-            if (this.state.selected_item !== -1) {
-                const data = this.props.model.edit_model?.new(this.props.model.get_item(this.state.selected_item)?.data) ?? {};
-                console.log(data);
+        this.props.model.summaryModel.requestEdit.clear().on(() => {
+            if (this.state.selectedItem !== -1) {
+                const data = this.props.model.editModel?.new(this.props.model.getItem(this.state.selectedItem)?.data) ?? {};
+                // console.log(data);
 
                 this.setState({
-                    edit_mode: true,
-                    edit_object: data,
+                    editMode: true,
+                    editObject: data,
                 });
             } else {
                 ipcRequest<DialogChannel>(Channels.Dialog, {
@@ -85,29 +85,29 @@ class ListView extends Component<Props, State> {
                 }).then();
             }
         });
-        this.props.model.summary_model.request_new.clear().on(() => {
+        this.props.model.summaryModel.requestNew.clear().on(() => {
             console.log('New');
             this.setState({
-                edit_mode: true,
-                new_object: true,
-                selected_item: -1,
-                edit_object: this.props.model.edit_model?.new() ?? {},
+                editMode: true,
+                newObject: true,
+                selectedItem: -1,
+                editObject: this.props.model.editModel?.new() ?? {},
             });
         });
 
-        this.props.model.edit_model?.request_cancel.clear().on(() => {
+        this.props.model.editModel?.request_cancel.clear().on(() => {
             this.setState({
-                edit_mode: false,
-                new_object: false,
+                editMode: false,
+                newObject: false,
             });
         });
-        this.props.model.edit_model?.request_save.clear().on(() => {
-            console.log(this.props.model.get_item(this.state.selected_item));
-            this.props.model.edit_model?.validate_and_save(this.state.edit_object, this.state.new_object ? undefined : this.props.model.get_item(this.state.selected_item)?.data)
+        this.props.model.editModel?.request_save.clear().on(() => {
+            // console.log(this.props.model.getItem(this.state.selected_item));
+            this.props.model.editModel?.validate_and_save(this.state.editObject, this.state.newObject ? undefined : this.props.model.getItem(this.state.selectedItem)?.data)
                 .then(() => {
                     this.setState({
-                        edit_mode: false,
-                        new_object: false,
+                        editMode: false,
+                        newObject: false,
                     });
                 }).catch(err => console.error(err));
         });
@@ -115,7 +115,7 @@ class ListView extends Component<Props, State> {
 
     public request_switch(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (this.state.edit_mode) {
+            if (this.state.editMode) {
                 ipcRequest<DialogChannel>(Channels.Dialog, {
                     type: 'question',
                     buttons: ['Ok'],
@@ -126,11 +126,11 @@ class ListView extends Component<Props, State> {
                 return;
             }
             this.setState({
-                selected_item: -1,
+                selectedItem: -1,
                 filter_open: false,
-                edit_mode: false,
-                new_object: false,
-                edit_object: {},
+                editMode: false,
+                newObject: false,
+                editObject: undefined,
             }, () => {
                 resolve();
             });
@@ -154,11 +154,12 @@ class ListView extends Component<Props, State> {
     }
 
     private set(key: string, value: any): void {
+        const object = this.state.editObject;
+
+        setNested(object, key, value);
+
         this.setState((prev) => ({
-            edit_object: {
-                ...prev.edit_object,
-                [key]: value,
-            },
+            editObject: object,
         }));
     }
 
@@ -176,7 +177,7 @@ class ListView extends Component<Props, State> {
                                 <ListHeader model={this.props.model} />
                                 <tbody className={'listview__table-body'}>
                                     {
-                                        this.props.model.all_items().map(item => {
+                                        this.props.model.allItems().map(item => {
                                             return (
                                                 <ListItem key={item} model={this.props.model} item={item} />
                                             );
@@ -202,49 +203,51 @@ class ListView extends Component<Props, State> {
                             }
                         </div>
                         {
-                            this.props.model.bottombar_data().length > 0 &&
-                            <Bottombar elements={this.props.model.bottombar_data()} />
+                            this.props.model.bottombarData().length > 0 &&
+                            <Bottombar elements={this.props.model.bottombarData()} />
                         }
                     </div>
                     {
-                        !this.state.edit_mode ? (
-                            <div className={'flex'}>
-                                <div className={'flex__child flex-withbottombar summary'}>
-                                    <table className={'summary__table'}>
-                                        <tbody className={'summary__table-body'}>
-                                            {
-                                                this.state.selected_item === -1 ? <tr>
-                                                    <td>Bitte auswählen</td>
-                                                </tr> :
-                                                    this.props.model.summary_model.keys().map(key => {
-                                                        return (
-                                                            <tr key={hash(key.toString())}>
-                                                                <td className={`summary__table-key summary__table-key-${key.toString()}`}>{this.props.model.summary_model.text_from_key(key)}:</td>
-                                                                <td className={`summary__table-value summary__table-value-${key.toString()}`}>{this.props.model.summary_model.text_from_value(key, this.props.model.get_item(this.state.selected_item)?.data)?.text_if_empty('-')}</td>
-                                                            </tr>
-                                                        );
-                                                    })
-                                            }
-                                        </tbody>
-                                    </table>
+                        !(this.state.editMode && this.state.editObject !== undefined)
+                            ? (
+                                <div className={'flex'}>
+                                    <div className={'flex__child flex-withbottombar summary'}>
+                                        <table className={'summary__table'}>
+                                            <tbody className={'summary__table-body'}>
+                                                {
+                                                    this.state.selectedItem === -1
+                                                        ? <tr>
+                                                            <td>Bitte auswählen</td>
+                                                        </tr>
+                                                        : this.props.model.summaryModel.keys().map(key => {
+                                                            return (
+                                                                <tr key={hash(key.toString())}>
+                                                                    <td className={`summary__table-key summary__table-key-${key.toString()}`}>{this.props.model.summaryModel.textFromKey(key)}:</td>
+                                                                    <td className={`summary__table-value summary__table-value-${key.toString()}`}>{this.props.model.summaryModel.textFromValue(key, this.props.model.getItem(this.state.selectedItem)?.data)?.textIfEmpty('-')}</td>
+                                                                </tr>
+                                                            );
+                                                        })
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {
+                                        this.props.model.summaryModel.bottombarData().length > 0 &&
+                                        <Bottombar elements={this.props.model.summaryModel.bottombarData()} />
+                                    }
                                 </div>
-                                {
-                                    this.props.model.summary_model.bottombar_data().length > 0 &&
-                                    <Bottombar elements={this.props.model.summary_model.bottombar_data()} />
-                                }
-                            </div>
-                        )
+                            )
                             : (
                                 <div className='flex'>
                                     <div className='flex__child flex-withbottombar edit'>
                                         <table className={'edit__table'}>
                                             <tbody className={'edit__table-body'}>
                                                 {
-                                                    this.props.model.edit_model?.keys().map(k => {
-                                                        const item = this.props.model.get_item(this.state.selected_item);
+                                                    this.props.model.editModel?.keys().map(k => {
+                                                        const item = this.state.editObject; //this.props.model.getItem(this.state.selectedItem);
                                                         let random = Math.random().toString();
 
-                                                        const get_data = (edt: EditType) => {
+                                                        const getData = (edt: EditType) => {
                                                             switch (edt) {
                                                                 case EditType.Label: {
                                                                     const key = k as Label<any>;
@@ -254,7 +257,7 @@ class ListView extends Component<Props, State> {
                                                                     const key = k as Edit<any>;
                                                                     random = key.binding.toString();
 
-                                                                    const value = item?.data[key.binding] as number;
+                                                                    const value = getNested(item, key.binding) as number;
                                                                     if (key.data) {
                                                                         return <input min={key.data[0]} max={key.data[1]} defaultValue={value}
                                                                             onChange={(e) => {
@@ -276,7 +279,7 @@ class ListView extends Component<Props, State> {
                                                                         return null;
                                                                     }
                                                                     const value = key.data as any[];
-                                                                    const selected = item?.data[key.binding] as string;
+                                                                    const selected = getNested(item, key.binding) as string;
                                                                     return (
                                                                         <select defaultValue={selected}
                                                                             onChange={(e) => {
@@ -287,7 +290,7 @@ class ListView extends Component<Props, State> {
                                                                                 value.map(val => {
                                                                                     return (
                                                                                         <option key={val}
-                                                                                            value={val}>{this.props.model.edit_model?.binding_key_value(key.binding, val)}</option>
+                                                                                            value={val}>{this.props.model.editModel?.binding_key_value(key.binding, val)}</option>
                                                                                     );
                                                                                 })
                                                                             }
@@ -304,13 +307,13 @@ class ListView extends Component<Props, State> {
                                                                             value.map(val => {
                                                                                 return (
                                                                                     <p key={val}>
-                                                                                        {this.props.model.edit_model?.binding_key_value(key.binding, val)}
+                                                                                        {this.props.model.editModel?.binding_key_value(key.binding, val)}
                                                                                         <input
-                                                                                            defaultChecked={item?.data[key.binding].includes(val)}
+                                                                                            defaultChecked={getNested(item, key.binding).includes(val)}
                                                                                             type='checkbox'
                                                                                             onChange={(e) => {
                                                                                                 const checked = e.target.checked;
-                                                                                                const data = this.state.edit_object[key.binding] as string[];
+                                                                                                const data = getNested(item, key.binding) as string[];
 
                                                                                                 const index = data.indexOf(val.toString(), 0);
                                                                                                 if (!checked && index > -1) {
@@ -330,7 +333,7 @@ class ListView extends Component<Props, State> {
                                                                     const key = k as Edit<any>;
                                                                     random = key.binding.toString();
 
-                                                                    const value = item?.data[key.binding] as string;
+                                                                    const value = getNested(item, key.binding) as string;
                                                                     return <textarea defaultValue={value} cols={40} rows={20}
                                                                         onChange={(e) => {
                                                                             this.set(key.binding.toString(), e.target.value);
@@ -340,7 +343,7 @@ class ListView extends Component<Props, State> {
                                                                     const key = k as Edit<any>;
                                                                     random = key.binding.toString();
 
-                                                                    const value = item?.data[key.binding] as string;
+                                                                    const value = getNested(item, key.binding) as string;
                                                                     return <input type='text' defaultValue={value}
                                                                         onChange={(e) => {
                                                                             this.set(key.binding.toString(), e.target.value);
@@ -350,7 +353,7 @@ class ListView extends Component<Props, State> {
                                                                     const key = k as Edit<any>;
                                                                     random = key.binding.toString();
 
-                                                                    const value = item?.data[key.binding] as boolean;
+                                                                    const value = getNested(item, key.binding) as boolean;
                                                                     return <input defaultChecked={value} type='checkbox'
                                                                         onChange={(e) => {
                                                                             this.set(key.binding.toString(), e.target.checked);
@@ -365,12 +368,12 @@ class ListView extends Component<Props, State> {
                                                         //     const key = k as Edit<any>;
                                                         //     random = key.binding.toString();
                                                         // }
-                                                        const d = get_data(k.type);
+                                                        const d = getData(k.type);
                                                         return (
                                                             <tr key={random}>
                                                                 {
                                                                     (k.type !== EditType.Label && k.type !== EditType.Space) &&
-                                                                    <td className={'edit__table-keys'}>{this.props.model.summary_model.text_from_key((k as Edit<any>).binding)}</td>
+                                                                    <td className={'edit__table-keys'}>{this.props.model.summaryModel.textFromKey((k as Edit<any>).binding.toString())}</td>
                                                                 }
                                                                 <td>{d}</td>
                                                             </tr>);
@@ -380,8 +383,8 @@ class ListView extends Component<Props, State> {
                                         </table>
                                     </div>
                                     {
-                                        (this.props.model.edit_model?.bottombar_data().length ?? 0) > 0 &&
-                                        <Bottombar elements={this.props.model.edit_model?.bottombar_data() ?? []} />
+                                        (this.props.model.editModel?.bottombar_data().length ?? 0) > 0 &&
+                                        <Bottombar elements={this.props.model.editModel?.bottombar_data() ?? []} />
                                     }
                                 </div>
                             )
@@ -392,7 +395,7 @@ class ListView extends Component<Props, State> {
     }
 
     private construct_filter(): JSX.Element[] {
-        const filter = this.props.model.filter_data;
+        const filter = this.props.model.filterData;
         if (filter === undefined) {
             return [];
         }

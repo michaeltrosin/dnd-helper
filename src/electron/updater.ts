@@ -1,11 +1,12 @@
-import {BrowserWindow, dialog} from 'electron';
-import {autoUpdater} from 'electron-updater';
+import { BrowserWindow, dialog } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import { Settings } from '@/electron/files/settings_file';
 
-let re_ask = true;
+let reAsk = true;
 
 class Updater {
     private constructor() {
+        //
     }
 
     static begin_update_checking(win: BrowserWindow, settings: Settings): void {
@@ -13,7 +14,7 @@ class Updater {
             dialog.showMessageBox(win, {
                 title: 'Update',
                 type: 'error',
-                message: 'Fehler: ' + err
+                message: 'Fehler: ' + err,
             }).then();
         });
 
@@ -23,18 +24,18 @@ class Updater {
                 type: 'info',
                 message: 'Update gefunden!',
                 detail: 'Es wird jetzt heruntergeladen.',
-                buttons: ['Ok']
+                buttons: ['Ok'],
             }).then();
         });
 
         autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-            re_ask = false;
+            reAsk = false;
             dialog.showMessageBox(win, {
                 title: 'Update',
                 type: 'info',
                 message: process.platform === 'win32' ? releaseNotes : releaseName,
                 detail: 'Neue Version wurde heruntergeladen. Zum Installieren bitte das Programm neustarten.',
-                buttons: ['Jetzt Neustarten', 'Später Neustarten']
+                buttons: ['Jetzt Neustarten', 'Später Neustarten'],
             }).then(selected => {
                 settings.set('show_changelog', true).save();
 
@@ -47,4 +48,4 @@ class Updater {
     }
 }
 
-export {Updater};
+export { Updater };

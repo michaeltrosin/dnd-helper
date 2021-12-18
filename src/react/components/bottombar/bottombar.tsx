@@ -1,9 +1,18 @@
-import {hash} from '@/utils';
-import {Component} from 'react';
+import { hash } from '@/utils';
+import { Component } from 'react';
 
 import './bottombar.scss';
 
-type BottombarState = {};
+enum BottombarComponentType {
+    Button,
+    Input,
+}
+
+interface BottombarComponent {
+    type: BottombarComponentType;
+}
+
+type BottombarState = any;
 type BottombarProps = {
     /**
      * @see Bottombar.button
@@ -11,25 +20,20 @@ type BottombarProps = {
      */
     elements: BottombarComponent[];
 
-    on_click?: (title: string) => void;
-    on_changed?: (title: string, content: string) => void;
-    on_key_pressed?: (title: string, key: string) => void;
+    onClick?: (title: string) => void;
+    onChanged?: (title: string, content: string) => void;
+    onKeyPressed?: (title: string, key: string) => void;
 };
-
-enum BottombarComponentType {
-    Button,
-    Input,
-}
 
 class Bottombar extends Component<BottombarProps, BottombarState> {
     /// Bottombar Types
-    static button = (text: string, on_click?: () => void) => {
-        return new BottombarButton(text, on_click);
-    }
+    static button = (text: string, onClick?: () => void) => {
+        return new BottombarButton(text, onClick);
+    };
 
-    static input = (text: string, content: string = '', on_changed?: (content: string) => void, on_key_pressed?: (key: string) => void) => {
-        return new BottombarInput(text, content, on_changed, on_key_pressed);
-    }
+    static input = (text: string, content = '', onChanged?: (content: string) => void, onKeyPressed?: (key: string) => void) => {
+        return new BottombarInput(text, content, onChanged, onKeyPressed);
+    };
 
     /// End Bottombar Types
 
@@ -42,42 +46,41 @@ class Bottombar extends Component<BottombarProps, BottombarState> {
                             const c = component as BottombarButton;
                             return (
                                 <button key={hash(c.text)} className='bottombar__button'
-                                        onClick={() => {
-                                            if (c.on_click) {
-                                                c.on_click();
+                                    onClick={() => {
+                                        if (c.onClick) {
+                                            c.onClick();
 
-                                                if (this.props.on_click) {
-                                                    this.props.on_click(c.text.toLowerCase());
-                                                }
+                                            if (this.props.onClick) {
+                                                this.props.onClick(c.text.toLowerCase());
                                             }
-                                        }}
+                                        }
+                                    }}
                                 >{c.text}</button>
                             );
                         } else if (component.type === BottombarComponentType.Input) {
                             const c = component as BottombarInput;
                             return (
                                 <input key={hash(c.text)} className='bottombar__input' type='text'
-                                       defaultValue={c.content}
-                                       onChange={event => {
-                                           if (c.on_changed) {
-                                               c.on_changed(event.target.value);
+                                    defaultValue={c.content}
+                                    onChange={event => {
+                                        if (c.onChanged) {
+                                            c.onChanged(event.target.value);
 
+                                            if (this.props.onChanged) {
+                                                this.props.onChanged(c.text.toLowerCase(), event.target.value);
+                                            }
+                                        }
+                                    }}
+                                    onKeyPress={event => {
+                                        if (c.onKeyPressed) {
+                                            c.onKeyPressed(event.key);
 
-                                               if (this.props.on_changed) {
-                                                   this.props.on_changed(c.text.toLowerCase(), event.target.value);
-                                               }
-                                           }
-                                       }}
-                                       onKeyPress={event => {
-                                           if (c.on_key_pressed) {
-                                               c.on_key_pressed(event.key);
-
-                                               if (this.props.on_key_pressed) {
-                                                   this.props.on_key_pressed(c.text.toLowerCase(), event.key);
-                                               }
-                                           }
-                                       }}
-                                       placeholder={c.text}
+                                            if (this.props.onKeyPressed) {
+                                                this.props.onKeyPressed(c.text.toLowerCase(), event.key);
+                                            }
+                                        }
+                                    }}
+                                    placeholder={c.text}
                                 />
                             );
                         }
@@ -88,14 +91,9 @@ class Bottombar extends Component<BottombarProps, BottombarState> {
         );
     }
 }
-
-interface BottombarComponent {
-    type: BottombarComponentType;
-}
-
 class BottombarButton implements BottombarComponent {
     constructor(public text: string,
-                public on_click?: () => void) {
+        public onClick?: () => void) {
     }
 
     type = BottombarComponentType.Button;
@@ -103,12 +101,12 @@ class BottombarButton implements BottombarComponent {
 
 class BottombarInput implements BottombarComponent {
     constructor(public text: string,
-                public content: string = '',
-                public on_changed?: (content: string) => void,
-                public on_key_pressed?: (key: string) => void) {
+        public content: string = '',
+        public onChanged?: (content: string) => void,
+        public onKeyPressed?: (key: string) => void) {
     }
 
     type = BottombarComponentType.Input;
 }
 
-export {Bottombar, BottombarComponent};
+export { Bottombar, BottombarComponent };

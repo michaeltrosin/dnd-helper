@@ -2,4 +2,4 @@ abstract class Model<ItemType> {
 
 }
 
-export {Model};
+export { Model };

@@ -31,4 +31,4 @@ class LiteEvent<T> implements ILiteEvent<T> {
     }
 }
 
-export {ILiteEvent, LiteEvent};
+export { ILiteEvent, LiteEvent };

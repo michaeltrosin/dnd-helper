@@ -42,7 +42,7 @@ export const SourceBooks = {
 
     fizbans_treasury_of_dragons: 'Fizbans Schatzkammer der Drachen',
     strixhaven_a_curriculum_of_chaos: 'Strixhaven: Ein Kurikulum von Chaos',
-    the_wild_beyond_the_witchlight: 'Das wilde hinter dem Hexenlicht'
+    the_wild_beyond_the_witchlight: 'Das wilde hinter dem Hexenlicht',
 };
 
 export type SourceBook = keyof(typeof SourceBooks);
@@ -56,5 +56,5 @@ export const SourceBooksSpell: SourceBook[] = [
     'tashas_cauldron_of_everything',
     'acquisitions_incorporated',
     'fizbans_treasury_of_dragons',
-    'strixhaven_a_curriculum_of_chaos'
+    'strixhaven_a_curriculum_of_chaos',
 ];

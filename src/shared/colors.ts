@@ -27,4 +27,4 @@ const ThemeColors = {
 
 type Theme = keyof (typeof ThemeColors);
 
-export {Theme, ThemeColors};
+export { Theme, ThemeColors };

@@ -161,6 +161,7 @@
     ],
     "globals": {
         "React": true,
-        "JSX": true
+        "JSX": true,
+        "Electron": true
     }
 }

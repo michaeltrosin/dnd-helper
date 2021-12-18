@@ -1,6 +1,6 @@
-import {Channels} from '@/shared/channels';
-import {AbstractIpcChannel} from '@/shared/ipc';
-import {dialog} from 'electron';
+import { Channels } from '@/shared/channels';
+import { AbstractIpcChannel } from '@/shared/ipc';
+import { dialog } from 'electron';
 
 type TArgs = {
     buttons: string[],
@@ -23,13 +23,13 @@ class DialogChannel extends AbstractIpcChannel<TArgs, TPayload> {
             title: payload.title,
             message: payload.message,
             type: payload.type,
-            buttons: payload.buttons
+            buttons: payload.buttons,
         }).then(result => {
             this.resolve(event, {
-                selected_index: result.response
+                selected_index: result.response,
             });
         });
     }
 }
 
-export {DialogChannel};
+export { DialogChannel };

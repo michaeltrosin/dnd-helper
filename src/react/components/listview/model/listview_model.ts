@@ -1,44 +1,46 @@
-import {BottombarComponent} from '@/react/components/bottombar/bottombar';
-import {EditModel} from '@/react/components/listview/model/edit_model';
-import {SummaryModel} from '@/react/components/listview/model/preview_model';
-import {Model} from '@/react/components/model';
-import {ILiteEvent, LiteEvent} from '@/utils/event';
+import { BottombarComponent } from '@/react/components/bottombar/bottombar';
+import { EditModel } from '@/react/components/listview/model/edit_model';
+import { SummaryModel } from '@/react/components/listview/model/preview_model';
+import { Model } from '@/react/components/model';
+import { ILiteEvent, LiteEvent } from '@/utils/event';
+import { NestedKeyOf } from '@/utils/generics';
+
+type ItemId = number;
 
 class ItemContainer<ItemType> {
     constructor(public data: ItemType,
-                public id: ItemId,
+        public id: ItemId,
     ) {
     }
 }
 
 type ListPreview<Binding> = {
     display: string;
-    binding: keyof (Binding);
+    binding: NestedKeyOf<Binding>;
     sortable?: boolean;
 };
 
-type ItemId = number;
 type FilterType = {
     binding?: any;
     bounds: any[];
     data: any[];
 };
 
-abstract class ListModel<ItemType> extends Model<ItemType>{
-    protected trigger_filter_event: LiteEvent<void> = new LiteEvent();
-    protected request_change_event: LiteEvent<void> = new LiteEvent();
-    protected item_clicked_event: LiteEvent<ItemId> = new LiteEvent();
+abstract class ListModel<ItemType> extends Model<ItemType> {
+    protected triggerFilterEvent: LiteEvent<void> = new LiteEvent();
+    protected requestChangeEvent: LiteEvent<void> = new LiteEvent();
+    protected itemClickedEvent: LiteEvent<ItemId> = new LiteEvent();
 
-    public get trigger_filter(): ILiteEvent<void> {
-        return this.trigger_filter_event.expose();
+    public get triggerFilter(): ILiteEvent<void> {
+        return this.triggerFilterEvent.expose();
     }
 
-    public get request_change(): ILiteEvent<void> {
-        return this.request_change_event.expose();
+    public get requestChange(): ILiteEvent<void> {
+        return this.requestChangeEvent.expose();
     }
 
-    public get item_clicked(): ILiteEvent<ItemId> {
-        return this.item_clicked_event.expose();
+    public get itemClicked(): ILiteEvent<ItemId> {
+        return this.itemClickedEvent.expose();
     }
 
     private items: Map<ItemId, ItemContainer<ItemType>> = new Map<ItemId, ItemContainer<ItemType>>();
@@ -48,13 +50,13 @@ abstract class ListModel<ItemType> extends Model<ItemType>{
         return this.items;
     }
 
-    abstract summary_model: SummaryModel<ItemType>;
-    abstract list_preview: ListPreview<ItemType>[];
-    edit_model?: EditModel<ItemType>;
+    abstract summaryModel: SummaryModel<ItemType>;
+    abstract listPreview: ListPreview<ItemType>[];
+    editModel?: EditModel<ItemType>;
 
-    filter_data?: Map<keyof (ItemType), FilterType>;
+    filterData?: Map<NestedKeyOf<ItemType>, FilterType>;
 
-    public get_item(id: ItemId): ItemContainer<ItemType> | undefined {
+    public getItem(id: ItemId): ItemContainer<ItemType> | undefined {
         if (id === -1) {
             return undefined;
         }
@@ -81,24 +83,25 @@ abstract class ListModel<ItemType> extends Model<ItemType>{
         this.id = 0;
     }
 
-    all_items(): ItemId[] {
-        return this.sorted_filtered_items();
+    allItems(): ItemId[] {
+        return this.sortedFilteredItems();
     }
 
-    body_item_clicked(item: ItemId): void {
-        this.item_clicked_event.invoke(item);
+    bodyItemClicked(item: ItemId): void {
+        this.itemClickedEvent.invoke(item);
     }
 
-    header_item_clicked(binding: keyof (ItemType)): void {
+    headerItemClicked(binding: NestedKeyOf<ItemType>): void {
+        //
     }
 
-    protected sorted_filtered_items(): ItemId[] {
+    protected sortedFilteredItems(): ItemId[] {
         return Array.from(this.Items.keys());
     }
 
-    abstract text_from_binding(item: ItemId, binding: keyof (ItemType)): string;
+    abstract textFromBingind(item: ItemId, binding: NestedKeyOf<ItemType>): string;
 
-    abstract bottombar_data(): BottombarComponent[];
+    abstract bottombarData(): BottombarComponent[];
 }
 
-export {ListModel, ListPreview, ItemId, FilterType};
+export { ListModel, ListPreview, ItemId, FilterType };

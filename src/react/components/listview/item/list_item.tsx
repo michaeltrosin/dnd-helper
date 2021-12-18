@@ -1,29 +1,25 @@
-import {ItemId, ListModel} from '@/react/components/listview/model/listview_model';
+import { ItemId, ListModel } from '@/react/components/listview/model/listview_model';
 import { hash } from '@/utils';
-import {Component} from 'react';
+import { Component } from 'react';
 
 type Props = {
     model: ListModel<any>;
     item: ItemId;
 };
-type State = {};
+type State = any;
 
 class ListItem extends Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-    }
-
     render(): JSX.Element {
         return (
             <tr className={'listview__table-body-row'}
                 onClick={() => {
-                this.props.model.body_item_clicked(this.props.item);
-            }}>
+                    this.props.model.bodyItemClicked(this.props.item);
+                }}>
                 {
-                    this.props.model.list_preview.map(item => {
+                    this.props.model.listPreview.map(item => {
                         return (
                             <td key={hash(item.binding.toString())} className={`listview__table-body-data listview-data__${item.binding.toString()}-body`}>
-                                {this.props.model.text_from_binding(this.props.item, item.binding)}
+                                {this.props.model.textFromBingind(this.props.item, item.binding)}
                             </td>
                         );
                     })
@@ -33,4 +29,4 @@ class ListItem extends Component<Props, State> {
     }
 }
 
-export {ListItem};
+export { ListItem };

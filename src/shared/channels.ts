@@ -3,5 +3,5 @@ export const Channels = {
     MessageQueue: 'message-queue-channel',
     DisplayInformation: 'display-information',
     Settings: 'settings',
-    OCRRequest: 'ocr-request'
+    OCRRequest: 'ocr-request',
 };

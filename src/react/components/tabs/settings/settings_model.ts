@@ -1,19 +1,19 @@
-import {SettingsChannel, SettingsRequestMethod} from '@/electron/channels/settings_channel';
-import {SettingsProfileType} from '@/electron/files/settings_file';
-import {Bottombar, BottombarComponent} from '@/react/components/bottombar/bottombar';
-import {Edit, EditModel, EditType} from '@/react/components/listview/model/edit_model';
-import {ItemId, ListModel, ListPreview} from '@/react/components/listview/model/listview_model';
-import {SummaryModel} from '@/react/components/listview/model/preview_model';
-import {Channels} from '@/shared/channels';
-import {Theme, ThemeColors} from '@/shared/colors';
-import {ipcRequest} from '@/shared/ipc';
+import { SettingsChannel, SettingsRequestMethod } from '@/electron/channels/settings_channel';
+import { SettingsProfileType } from '@/electron/files/settings_file';
+import { Bottombar, BottombarComponent } from '@/react/components/bottombar/bottombar';
+import { Edit, EditModel, EditType } from '@/react/components/listview/model/edit_model';
+import { ItemId, ListModel, ListPreview } from '@/react/components/listview/model/listview_model';
+import { SummaryModel } from '@/react/components/listview/model/preview_model';
+import { Channels } from '@/shared/channels';
+import { Theme, ThemeColors } from '@/shared/colors';
+import { ipcRequest } from '@/shared/ipc';
 import '@/utils/extensions';
-import {ILiteEvent, LiteEvent} from '@/utils/event';
+import { getNested, NestedKeyOf } from '@/utils/generics';
 
 type SettingsModelType = SettingsProfileType;
 
 class SettingsEditModel extends EditModel<SettingsModelType> {
-    binding_key_value(binding: keyof SettingsModelType, key: string): string {
+    binding_key_value(binding: NestedKeyOf<SettingsModelType>, key: string): string {
         if (binding === 'theme') {
             return key;
         }
@@ -31,7 +31,7 @@ class SettingsEditModel extends EditModel<SettingsModelType> {
         ];
     }
 
-    validate_and_save(object: SettingsModelType, selected_object: SettingsModelType | undefined): Promise<void> {
+    validate_and_save(object: SettingsModelType, selectedObject: SettingsModelType | undefined): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             ipcRequest<SettingsChannel>(Channels.Settings, {
                 method: SettingsRequestMethod.Set,
@@ -85,22 +85,22 @@ class SettingsEditModel extends EditModel<SettingsModelType> {
 }
 
 class SettingsSummaryModel extends SummaryModel<SettingsModelType> {
-    bottombar_data(): BottombarComponent[] {
+    bottombarData(): BottombarComponent[] {
         return [
             Bottombar.button('Bearbeiten', () => {
-                this.request_edit_event.invoke();
+                this.requestEditEvent.invoke();
             }),
         ];
     }
 
-    keys(): (keyof SettingsModelType)[] {
+    keys(): (NestedKeyOf<SettingsModelType>)[] {
         return [
             'name',
             'theme',
         ];
     }
 
-    text_from_key(key: keyof SettingsModelType): string {
+    textFromKey(key: NestedKeyOf<SettingsModelType>): string {
         switch (key) {
             case 'name':
                 return 'Name';
@@ -109,11 +109,9 @@ class SettingsSummaryModel extends SummaryModel<SettingsModelType> {
             case 'edit':
                 return 'Bearbeitungs modus';
         }
-
-        return `${key.toString()}`;
     }
 
-    text_from_value(key: keyof SettingsModelType, item: SettingsModelType): string {
+    textFromValue(key: NestedKeyOf<SettingsModelType>, item: SettingsModelType): string {
         if (item === undefined) {
             return '';
         }
@@ -132,23 +130,23 @@ class SettingsSummaryModel extends SummaryModel<SettingsModelType> {
             return item.edit ? 'Ja' : 'Nein';
         }
 
-        return (item[key] ?? '-').toString();
+        return (getNested(item, key) ?? '-').toString();
     }
 }
 
 class SettingsModel extends ListModel<SettingsModelType> {
-    list_preview: ListPreview<SettingsModelType>[] = [
-        {display: 'Profil', binding: 'name'},
+    listPreview: ListPreview<SettingsModelType>[] = [
+        { display: 'Profil', binding: 'name' },
     ];
 
-    edit_model: EditModel<SettingsModelType> = new SettingsEditModel();
-    summary_model: SummaryModel<SettingsModelType> = new SettingsSummaryModel();
+    editModel: EditModel<SettingsModelType> = new SettingsEditModel();
+    summaryModel: SummaryModel<SettingsModelType> = new SettingsSummaryModel();
 
     private selected_profile: SettingsModelType | undefined = undefined;
 
     private get_index_of(name: string): number {
-        for (const item of this.all_items()) {
-            if (this.get_item(item)?.data.name === name) {
+        for (const item of this.allItems()) {
+            if (this.getItem(item)?.data.name === name) {
                 return item;
             }
         }
@@ -169,18 +167,17 @@ class SettingsModel extends ListModel<SettingsModelType> {
                 });
             }
 
-            this.selected_profile = this.get_item(this.get_index_of(payload.selected))?.data;
+            this.selected_profile = this.getItem(this.get_index_of(payload.selected))?.data;
         }).then(() => {
-            this.request_change_event.invoke();
+            this.requestChangeEvent.invoke();
         });
     }
-
 
     public get SelectedProfile(): SettingsModelType | undefined {
         return this.selected_profile;
     }
 
-    bottombar_data(): BottombarComponent[] {
+    bottombarData(): BottombarComponent[] {
         return [
             Bottombar.button('Profile laden', () => {
                 console.log('Loading');
@@ -192,13 +189,13 @@ class SettingsModel extends ListModel<SettingsModelType> {
         ];
     }
 
-    text_from_binding(itemId: ItemId, binding: keyof SettingsModelType): string {
-        const item = this.get_item(itemId);
+    textFromBingind(itemId: ItemId, binding: NestedKeyOf<SettingsModelType>): string {
+        const item = this.getItem(itemId);
         if (item === undefined) {
             return '';
         }
-        return this.summary_model.text_from_value(binding, item.data);
+        return this.summaryModel.textFromValue(binding, item.data);
     }
 }
 
-export {SettingsModel, SettingsSummaryModel};
+export { SettingsModel, SettingsSummaryModel };

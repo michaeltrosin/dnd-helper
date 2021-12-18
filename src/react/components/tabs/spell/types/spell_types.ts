@@ -1,10 +1,3 @@
-export type SpellClass = keyof (typeof SpellConstants.classes);
-export type School = keyof (typeof SpellConstants.schools);
-export type TimeUnit = keyof (typeof SpellConstants.time_units);
-export type RangeUnit = keyof (typeof SpellConstants.range_units);
-export type DurationUnit = keyof (typeof SpellConstants.duration_units);
-export type Attribute = keyof (typeof SpellConstants.attributes);
-
 export const SpellConstants = {
     classes: {
         artificer: 'Erfinder',
@@ -75,5 +68,12 @@ export const SpellConstants = {
         end_of_turn: 'Ende von deinem Zug',
         end_of_target_turn: 'Ende vom Zug des Ziels',
         round: 'Runde-/n',
-    }
+    },
 };
+
+export type SpellClass = keyof (typeof SpellConstants.classes);
+export type School = keyof (typeof SpellConstants.schools);
+export type TimeUnit = keyof (typeof SpellConstants.time_units);
+export type RangeUnit = keyof (typeof SpellConstants.range_units);
+export type DurationUnit = keyof (typeof SpellConstants.duration_units);
+export type Attribute = keyof (typeof SpellConstants.attributes);

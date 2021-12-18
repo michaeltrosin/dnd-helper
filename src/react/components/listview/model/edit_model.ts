@@ -1,5 +1,6 @@
-import {BottombarComponent} from '@/react/components/bottombar/bottombar';
-import {ILiteEvent, LiteEvent} from '@/utils/event';
+import { BottombarComponent } from '@/react/components/bottombar/bottombar';
+import { ILiteEvent, LiteEvent } from '@/utils/event';
+import { NestedKeyOf } from '@/utils/generics';
 
 enum EditType {
     Combobox,
@@ -16,7 +17,7 @@ enum EditType {
 
 type Edit<Type> = {
     type: Exclude<Exclude<EditType, EditType.Space>, EditType.Label>;
-    binding: keyof (Type);
+    binding: NestedKeyOf<Type>;
     /**
      * With type = Numberfield: data[0] = min; data[1] = max;
      *
@@ -48,13 +49,13 @@ abstract class EditModel<Type> {
         return this.request_cancel_event.expose();
     }
 
-    validate_and_save(object: Type, selected_object: Type | undefined): Promise<void> {
+    validate_and_save(object: Type, selectedObject: Type | undefined): Promise<void> {
         return Promise.resolve();
     }
 
     abstract keys(): EditModelKeys<Type>[];
 
-    abstract binding_key_value(binding: keyof (Type), key: string): string;
+    abstract binding_key_value(binding: NestedKeyOf<Type>, key: string): string;
 
     abstract bottombar_data(): BottombarComponent[];
 
@@ -65,4 +66,4 @@ abstract class EditModel<Type> {
     abstract to_html_body(item: Type): string;
 }
 
-export {EditModel, Edit, EditType, Space, EditModelKeys, Label};
+export { EditModel, Edit, EditType, Space, EditModelKeys, Label };
