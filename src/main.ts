@@ -1,3 +1,4 @@
+import { Changelog } from '@/electron/changelog';
 import { DialogChannel } from '@/electron/channels/dialog_channel';
 import { DisplayInformationChannel } from '@/electron/channels/display_information_channel';
 import { MessageQueueChannel } from '@/electron/channels/message_queue_channel';
@@ -5,12 +6,9 @@ import { SettingsChannel } from '@/electron/channels/settings_channel';
 import { Settings } from '@/electron/files/settings_file';
 import { Filesystem } from '@/electron/filesystem';
 import { Updater } from '@/electron/updater';
-
-import { AbstractIpcChannel, ipcRequest } from '@/shared/ipc';
+import { AbstractIpcChannel } from '@/shared/ipc';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import isDev from 'electron-is-dev';
-import { Changelog } from '@/electron/changelog';
-import { Channels } from '@/shared/channels';
 
 let win: BrowserWindow;
 let settings: Settings;
@@ -27,7 +25,7 @@ app.on('ready', () => {
     Filesystem.initialize();
     settings = new Settings().load();
 
-    create_window();
+    createWindow();
     if (settings.get('latest_changelog') !== app.getVersion()) {
         settings.set('show_changelog', true);
     }
@@ -56,19 +54,19 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-function create_window(): void {
+function createWindow(): void {
     win = new BrowserWindow({
         width: settings.get('width'),
         height: settings.get('height'),
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true
+            enableRemoteModule: true,
         },
         minHeight: 800,
         minWidth: 600,
         title: `DnD-Helper v${app.getVersion()}`,
-        icon: ''
+        icon: '',
     });
     win.removeMenu();
     win.loadURL(
@@ -88,6 +86,6 @@ function create_window(): void {
         new DialogChannel(),
         new MessageQueueChannel(),
         new DisplayInformationChannel(),
-        new SettingsChannel(settings)
+        new SettingsChannel(settings),
     ]);
 }
