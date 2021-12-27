@@ -28,7 +28,7 @@
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
-    "electron": "^13.1.7",
+    "electron": "^16.0.5",
     "electron-builder": "^22.11.7",
     "electron-is-dev": "^2.0.0",
     "eslint": "^8.3.0",
