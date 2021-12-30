@@ -9,6 +9,7 @@ import { Updater } from '@/electron/updater';
 import { AbstractIpcChannel } from '@/shared/ipc';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import isDev from 'electron-is-dev';
+import path from 'path';
 
 let win: BrowserWindow;
 let settings: Settings;
@@ -61,7 +62,6 @@ function createWindow(): void {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true,
         },
         minHeight: 800,
         minWidth: 600,
@@ -72,7 +72,7 @@ function createWindow(): void {
     win.loadURL(
         isDev
             ? 'http://localhost:9000'
-            : `file://${__dirname}/index.html`,
+            : path.join('file://', __dirname, 'index.html'),
     ).then();
     if (settings.get('maximized')) {
         win.maximize();
